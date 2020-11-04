@@ -38,7 +38,10 @@ module.exports = {
     "react/jsx-props-no-spreading": "off", //props를 스프래드 할 수 있다.
     "jsx-a11y/anchor-is-valid": "off", // next js에서는 a에 href없이 사용
     "global-require": "off", //함수 내에서 require 사용가능
-    "no-use-before-define": "off", // 선언전에 사용하지 말라
+    "no-use-before-define": "off", // 선언전에 사용하지 말라,
+    "import/prefer-default-export": "off", //export default 권장
+    "no-param-reassign": "off", //param assign 하지 않기
+    indent: "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] }, //jsx사용가능한 확장자 설정

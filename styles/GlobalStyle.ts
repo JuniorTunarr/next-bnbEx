@@ -1,6 +1,6 @@
 import reset from "styled-reset";
 import { createGlobalStyle, css } from "styled-components";
-import pallete from "./palette";
+import paltte from "./palette";
 
 const globalStyle = css`
   ${reset};
@@ -9,7 +9,11 @@ const globalStyle = css`
   }
   body {
     font-family: Noto Sans, Noto Sans KR;
-    color: ${pallete.black};
+    color: ${paltte.black};
+  }
+  a {
+    text-decoration: none;
+    color: ${paltte.black};
   }
 `;
 
