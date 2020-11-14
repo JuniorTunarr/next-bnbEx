@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
@@ -100,6 +100,12 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      setValidateMode(false);
+    };
+  }, []);
+
   return (
     <Container onSubmit={onSubmitLogin}>
       <CloseXIcon className="mordal-close-x-icon" onClick={closeModal} />
@@ -134,7 +140,9 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
         />
       </div>
       <div className="login-modal-submit-button-wrapper">
-        <Button type="submit">로그인</Button>
+        <Button type="submit" color="bittersweet">
+          로그인
+        </Button>
       </div>
       <p>
         이미 에어비앤비 계정이 있나요?

@@ -41,6 +41,10 @@ module.exports = {
     "no-use-before-define": "off", // 선언전에 사용하지 말라,
     "import/prefer-default-export": "off", //export default 권장
     "no-param-reassign": "off", //param assign 하지 않기
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-invalid-css": "off",
+    "no-confusing-arrow": "off",
+    "react/jsx-curly-newline": "off",
     indent: "off",
     "react/jsx-filename-extension": [
       1,

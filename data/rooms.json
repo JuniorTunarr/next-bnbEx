@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "largeBuildingType": "별채",
+    "buildingType": "게스트 스위트",
+    "roomType": "entire",
+    "isSetUpForGuest": true,
+    "maximumGuestCount": 2,
+    "bedroomCount": 4,
+    "bedCount": 2,
+    "bedList": [
+      { "id": 1, "beds": [{ "type": "에어 매트릭스", "count": 1 }] },
+      { "id": 2, "beds": [] },
+      { "id": 3, "beds": [] },
+      { "id": 4, "beds": [] }
+    ],
+    "publicBedList": [{ "type": "요와 이불", "count": 2 }],
+    "bathroomCount": 1.5,
+    "bathroomType": "private",
+    "country": "대한민국",
+    "city": "서울특별시",
+    "district": "마포구",
+    "streetAddress": "상암동 ２１７−１",
+    "detailAddress": "",
+    "postcode": "121-270",
+    "latitude": 37.57899942818059,
+    "longitude": 126.8911821,
+    "amentities": ["샴푸", "헤어 드라이어"],
+    "conveniences": ["수영장", "헬스장"],
+    "photos": [
+      "https://jerrynim-next-bnb.s3.amazonaws.com/Rectangle%2017__968c61b2-a585-4720-aebb-00e5de06c8e4.jpg",
+      "https://jerrynim-next-bnb.s3.ap-northeast-2.amazonaws.com/room_image_2_2x__1654bd25-d64c-4b6c-b70d-5ae10cdf81a9.jpg",
+      "https://jerrynim-next-bnb.s3.ap-northeast-2.amazonaws.com/room_image_3_2x__73b6e51d-fa28-4e87-b941-8ac070b54d00.jpg",
+      "https://jerrynim-next-bnb.s3.ap-northeast-2.amazonaws.com/room_image_4_2x__b42fcc84-5271-492c-93d3-eabed0e4de9d.jpg",
+      "https://jerrynim-next-bnb.s3.ap-northeast-2.amazonaws.com/room_image_5_2x__6b97364c-2d20-4675-9835-59eb4b0ee36a.jpg"
+    ],
+    "description": "ㅇ",
+    "title": "ㅇ",
+    "price": 12334456,
+    "startDate": "2020-11-10T00:00:00.000Z",
+    "endDate": "2020-11-26T00:00:00.000Z",
+    "hostId": 15,
+    "createdAt": "2020-11-13T12:53:50.736Z",
+    "updatedAt": "2020-11-13T12:53:50.736Z"
+  }
+]

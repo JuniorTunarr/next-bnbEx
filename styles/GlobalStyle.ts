@@ -10,6 +10,7 @@ const globalStyle = css`
   body {
     font-family: Noto Sans, Noto Sans KR;
     color: ${paltte.black};
+    line-height: 1.2;
   }
   a {
     text-decoration: none;
