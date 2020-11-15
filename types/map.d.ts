@@ -1,3 +1,5 @@
+import { RootState } from "../store";
+
 declare module "googlemaps";
 
 declare global {

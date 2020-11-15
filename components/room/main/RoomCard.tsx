@@ -159,7 +159,7 @@ const RoomCard: React.FC<IProps> = ({ room, showMap }) => {
   }, []);
   return (
     <Container showMap={showMap}>
-      <Link href="/room/[id]" as={`/room/${room.id}`}>
+      <Link href={`/room/${room.id}`}>
         <a>
           <div className="room-card-photo-wrapper">
             <img src={room.photos[0]} alt="" />
