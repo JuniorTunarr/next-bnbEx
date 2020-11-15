@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { useDispatch } from "react-redux";
 import DatePicker from "../../common/DatePicker";
-import "react-datepicker/dist/react-datepicker.css";
 import palette from "../../../styles/palette";
 import { useSelector } from "../../../store";
 import { registerRoomActions } from "../../../store/registerRoom";
