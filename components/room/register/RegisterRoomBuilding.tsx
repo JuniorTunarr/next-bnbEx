@@ -17,6 +17,7 @@ const Container = styled.div`
     margin-bottom: 56px;
   }
   h3 {
+    font-size: 14px;
     font-weight: bold;
     color: ${palette.gray_76};
     margin-bottom: 6px;
@@ -157,7 +158,7 @@ const RegisterRoomBuilding: React.FC = () => {
         return boutiquesHotelBuildingTypeList;
       }
       default:
-        return [];
+        return ["아파트"];
     }
   }, [largeBuildingType]);
 

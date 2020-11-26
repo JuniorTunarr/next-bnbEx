@@ -56,7 +56,7 @@ const Container = styled.div`
 declare global {
   interface Window {
     google: any;
-    initMap: () => void;
+    initMap: any;
   }
 }
 

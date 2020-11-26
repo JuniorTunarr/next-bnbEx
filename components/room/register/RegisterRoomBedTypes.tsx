@@ -20,18 +20,16 @@ const Container = styled.li`
   .register-room-bed-type-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
   .register-room-bed-type-bedroom {
     font-size: 19px;
     color: ${palette.gray_48};
   }
   .register-room-bed-type-selector-wrapper {
+    margin-top: 28px;
     width: 320px;
   }
-  .register-room-bed-type-bedroom-texts {
-    margin-bottom: 28px;
-  }
+
   .register-room-bed-type-counters {
     width: 320px;
     margin-top: 28px;
@@ -43,6 +41,8 @@ const Container = styled.li`
   .register-room-bed-type-bedroom-counts {
     font-size: 19px;
     color: ${palette.gray_76};
+    max-width: 240px;
+    word-break: keep-all;
   }
 `;
 
@@ -100,7 +100,7 @@ const RegisterRoomBedTypes: React.FC<IProps> = ({ bedroom }) => {
   return (
     <Container>
       <div className="register-room-bed-type-top">
-        <div className="register-room-bed-type-bedroom-texts">
+        <div>
           <p className="register-room-bed-type-bedroom">{bedroom.id}번 침실</p>
           <p className="register-room-bed-type-bedroom-counts">
             침대 {totalBedsCount}개<br />

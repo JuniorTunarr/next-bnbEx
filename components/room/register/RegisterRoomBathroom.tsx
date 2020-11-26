@@ -17,6 +17,7 @@ const Container = styled.div`
     margin-bottom: 56px;
   }
   h3 {
+    font-size: 14px;
     font-weight: bold;
     color: ${palette.gray_76};
     margin-bottom: 6px;
@@ -27,7 +28,7 @@ const Container = styled.div`
     margin-bottom: 24px;
   }
   .register-room-bathroom-counter-wrapper {
-    width: 290px;
+    width: 320px;
     margin-bottom: 32px;
   }
 `;

@@ -22,7 +22,6 @@ const Container = styled.li`
   .register-room-bed-type-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
   .register-room-bed-type-bedroom {
     font-size: 19px;
@@ -36,6 +35,8 @@ const Container = styled.li`
   .register-room-bed-type-bedroom-counts {
     font-size: 19px;
     color: ${palette.gray_76};
+    max-width: 240px;
+    word-break: keep-all;
   }
   .register-room-bed-type-counter {
     width: 290px;
