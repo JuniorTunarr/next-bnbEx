@@ -59,6 +59,8 @@ const Container = styled.div`
   }
 `;
 
+const disabledCountryOptions = ["국가/지역 선택"];
+
 const RegisterLocation: React.FC = () => {
   const country = useSelector((state) => state.registerRoom.country);
   const city = useSelector((state) => state.registerRoom.city);
@@ -160,8 +162,8 @@ const RegisterLocation: React.FC = () => {
           options={countryList}
           useValidation={false}
           defaultValue="국가/지역 선택"
-          disabledOptions={["국가/지역 선택"]}
-          value={country}
+          disabledOptions={disabledCountryOptions}
+          value={country || undefined}
           onChange={onChangeCountry}
         />
       </div>

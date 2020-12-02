@@ -88,13 +88,16 @@ const SearchRoomGuests: React.FC = () => {
   const setInfantsCountDispatch = (value: number) => {
     dispatch(searchRoomActions.setInfantsCount(value));
   };
-
+  //* 게스트 인원 수 텍스트
+  const guetsText = `게스트 ${adultCount}명${
+    !childrenCount ? "" : `, 어린이${childrenCount}명`
+  }${!infantsCount ? "" : `, 유아${infantsCount}명`}`;
   return (
     <Container onClick={() => setPopupOpened(true)}>
       <OutsideClickHandler onOutsideClick={() => setPopupOpened(false)}>
         <div className="search-room-bar-guests-texts">
           <p className="search-room-bar-guests-label">인원</p>
-          <p className="search-room-bar-guests-text">성인 0명</p>
+          <p className="search-room-bar-guests-text">{guetsText}</p>
         </div>
 
         <div className="search-room-bar-button-wrapper">
@@ -106,6 +109,7 @@ const SearchRoomGuests: React.FC = () => {
               <Counter
                 label="성인"
                 description="만 13세 이상"
+                onChange={(count) => setAdultCountDispatch(count)}
                 minValue={1}
                 value={adultCount}
               />
@@ -114,7 +118,7 @@ const SearchRoomGuests: React.FC = () => {
               <Counter
                 label="어린이"
                 description="2~12세"
-                value={childrenCount}
+                onChange={(count) => setChildrenCountDispatch(count)}
               />
             </div>
             <div className="search-room-bar-guests-counter-wrapper">
@@ -122,6 +126,7 @@ const SearchRoomGuests: React.FC = () => {
                 label="유아"
                 description="2세 미만"
                 value={infantsCount}
+                onChange={(count) => setInfantsCountDispatch(count)}
               />
             </div>
           </div>

@@ -14,6 +14,7 @@ const normalSelectorStyle = css`
     height: 100%;
     background-color: white;
     border: 1px solid ${palette.gray_eb};
+    font-size: 16px;
     padding: 0 11px;
     border-radius: 4px;
     outline: none;
@@ -21,7 +22,6 @@ const normalSelectorStyle = css`
     background-image: url("/static/svg/common/selector/selector_down_arrow.svg");
     background-position: right 11px center;
     background-repeat: no-repeat;
-    font-size: 16px;
     &:focus {
       border-color: ${palette.dark_cyan};
     }
@@ -52,6 +52,7 @@ const RegisterSelectorStyle = css`
     background-image: url("/static/svg/common/selector/register_selector_down_arrow.svg");
     background-position: right 14px center;
     background-repeat: no-repeat;
+    font-size: 16px;
   }
 `;
 
