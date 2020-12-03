@@ -40,18 +40,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     Data.user.write([...users, newUser]);
 
-    const token = jwt.sign(String(newUser.id), process.env.JWT_SECRET!);
-    res.setHeader(
-      "Set-Cookie",
-      `access_token=${token}; path=/; expires=${new Date(
-        Date.now() + 60 * 60 * 24 * 1000 * 3 //3일
-      )}; httponly`
-    );
+    await new Promise((resolve) => {
+      const token = jwt.sign(String(newUser.id), process.env.JWT_SECRET!);
+      res.setHeader(
+        "Set-Cookie",
+        `access_token=${token}; path=/; expires=${new Date(
+          Date.now() + 60 * 60 * 24 * 1000 * 3 //3일
+        )}; httponly`
+      );
+      resolve(token);
+    });
 
-    const newUserWithoutPassword: Partial<Pick<
-      StoredUserType,
-      "password"
-    >> = newUser;
+    const newUserWithoutPassword: Partial<
+      Pick<StoredUserType, "password">
+    > = newUser;
 
     delete newUserWithoutPassword.password;
     res.statusCode = 200;
