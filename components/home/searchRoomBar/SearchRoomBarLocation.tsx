@@ -146,7 +146,6 @@ const SearchRoomBarLocation: React.FC = () => {
   const onClickResult = async (placeId: string) => {
     try {
       const { data } = await getPlaceAPI(placeId);
-      console.log(data);
       setLocationDispatch(data.location);
       setLatitudeDispatch(data.latitude);
       setLongitudeDispatch(data.longitude);

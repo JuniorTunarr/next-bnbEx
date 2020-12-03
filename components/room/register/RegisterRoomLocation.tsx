@@ -110,7 +110,6 @@ const RegisterLocation: React.FC = () => {
 
   //* 현재 위치 불러오기에 성공했을 때
   const onSuccessGetLocation = async ({ coords }: any) => {
-    console.log(coords);
     try {
       const { data: currentLocation } = await getLocationInfoAPI({
         latitude: coords.latitude,

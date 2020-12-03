@@ -230,7 +230,6 @@ const SignUpModal: React.FC<IProps> = ({ closeModal }) => {
     event.preventDefault();
 
     setValidateMode(true);
-    console.log(validateSignUpForm());
 
     if (validateSignUpForm()) {
       try {

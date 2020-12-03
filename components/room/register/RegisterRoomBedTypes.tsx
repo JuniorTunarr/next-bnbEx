@@ -76,8 +76,6 @@ const RegisterRoomBedTypes: React.FC<IProps> = ({ bedroom }) => {
     return bedTypes.filter((bedType) => !activedBedOptions.includes(bedType));
   }, [activedBedOptions, bedroom]);
 
-  console.log(activedBedOptions);
-
   //* 침실유형 열고 닫기
   const toggleOpened = () => setOpened(!opened);
 
