@@ -27,9 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const originalFileName = files.file.name.split(".").shift();
           //* 확장자
           const fileExtension = files.file.name.split(".").pop();
-          console.log(process.env.S3_BUCKET_NAME!, "버킷");
-          console.log(process.env.ACCESSKEY_ID!, "버킷");
-          console.log(process.env.SECRET_ACCESSKEY_ID!, "버킷");
+
           await s3
             .upload({
               Bucket: process.env.S3_BUCKET_NAME!,

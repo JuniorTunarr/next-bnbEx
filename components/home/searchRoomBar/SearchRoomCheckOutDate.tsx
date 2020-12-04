@@ -72,7 +72,7 @@ const SearchRoomCheckOutDate: React.FC = () => {
           popperPlacement="bottom-end"
           startDate={checkInDate}
           endDate={checkOutDate}
-          minDate={checkInDate}
+          minDate={checkInDate || new Date()}
           placeholderText="날짜 추가"
         />
       </div>

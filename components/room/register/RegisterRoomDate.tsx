@@ -103,7 +103,7 @@ const RegisterRoomDate: React.FC = () => {
               selectsEnd
               startDate={dateStartDate}
               endDate={dateEndDate}
-              minDate={dateStartDate}
+              minDate={dateStartDate || new Date()}
             />
           </label>
         </div>

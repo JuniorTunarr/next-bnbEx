@@ -118,6 +118,7 @@ const SearchRoomGuests: React.FC = () => {
               <Counter
                 label="어린이"
                 description="2~12세"
+                value={childrenCount}
                 onChange={(count) => setChildrenCountDispatch(count)}
               />
             </div>
