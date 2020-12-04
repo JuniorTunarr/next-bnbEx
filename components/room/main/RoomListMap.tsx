@@ -47,7 +47,7 @@ const Container = styled.div`
     left: 40px;
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 12px;
-    background-image: url("/static/svg/room/map/google_close.svg");
+    background-image: url("/static/svg/map/google_close.svg");
     background-repeat: no-repeat;
     background-position: center;
   }

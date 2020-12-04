@@ -14,6 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY
         }&language=ko&input=${encodeURI(keyword as string)}`
       );
+      console.log(data);
       //* description과 placeId를 전달
       const results = data.predictions.map((prediction: any) => ({
         description: prediction.description,

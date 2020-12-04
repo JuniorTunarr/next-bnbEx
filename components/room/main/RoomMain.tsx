@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import dynamic from "next/dynamic";
 import { format } from "date-fns";
 import MapIcon from "../../../public/static/svg/room/main/map.svg";
@@ -13,6 +13,12 @@ const Container = styled.div<{ showMap: boolean }>`
   padding: 50px 80px;
   margin: auto;
 
+  ${({ showMap }) =>
+    showMap &&
+    css`
+      width: 840px;
+      margin: 0;
+    `};
   .room-list-info {
     margin-bottom: 8px;
   }

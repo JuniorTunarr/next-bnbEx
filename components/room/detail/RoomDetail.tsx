@@ -163,7 +163,7 @@ const RoomDetail: React.FC = () => {
               <div className="room-detail-divider" />
             </>
           )}
-          {!isEmpty(room.conveniences) && (
+          {!isEmpty(room.amentities) && (
             <>
               <p className="room-detatil-conveniences-label">편의시설</p>
               <ul className="room-detatil-conveniences-list">
