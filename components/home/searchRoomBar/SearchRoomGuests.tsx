@@ -61,7 +61,7 @@ const Container = styled.div`
   .search-room-bar-button-wrapper {
     position: absolute;
     right: 0;
-    top: 12px;
+    top: 9px;
     right: 12px;
   }
 `;

@@ -88,7 +88,7 @@ const Container = styled.div`
       align-items: center;
       width: 50%;
       margin-bottom: 16px;
-      svg {
+      img {
         margin-right: 16px;
       }
     }
@@ -157,6 +157,13 @@ const RoomDetail: React.FC = () => {
                       {bedroom.id}번 침실
                     </p>
                     <p>{getBedTypesText(bedroom.beds)}</p>
+                  </li>
+                ))}
+                {room.publicBedList.map((bedroom, index) => (
+                  <li className="room-detail-bedroom-card" key={index}>
+                    <BedIcon />
+                    <p className="room-detail-bed-card-number">공용 공간</p>
+                    <p>{getBedTypesText([bedroom])}</p>
                   </li>
                 ))}
               </ul>

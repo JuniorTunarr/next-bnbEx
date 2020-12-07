@@ -34,13 +34,13 @@ const RegisterRoomPrice: React.FC = () => {
   const onChangePrice = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value;
 
+    const numberPrice = Number(input.replace(/,/g, ""));
     //? 인풋 값이 비워지면 price를 0으로 변경
-    if (!input) {
+    if (!numberPrice || numberPrice === 0) {
       dispatch(registerRoomActions.setPrice(0));
     }
 
-    const numberPrice = Number(input.replace(/,/g, ""));
-    if (numberPrice) {
+    if (numberPrice !== 0) {
       dispatch(registerRoomActions.setPrice(numberPrice));
     }
   };

@@ -46,6 +46,7 @@ const RegisterRoomSubmitFooter: React.FC = () => {
     };
     try {
       await registerRoomAPI(registerRoomBody);
+
       router.push("/");
     } catch (e) {
       console.log(e);

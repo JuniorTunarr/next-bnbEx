@@ -1860,10 +1860,10 @@ autosize@^4.0.2:
   resolved "https://registry.yarnpkg.com/autosize/-/autosize-4.0.2.tgz#073cfd07c8bf45da4b9fd153437f5bafbba1e4c9"
   integrity sha512-jnSyH2d+qdfPGpWlcuhGiHmqBJ6g3X+8T+iRwFrHPLVcdoGJE/x6Qicm6aDHfTsbgZKxyV8UU/YB2p4cjKDRRA==
 
-aws-sdk@^2.789.0:
-  version "2.791.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.791.0.tgz#a85bedd46c97e0d262edb055651075c3171a171c"
-  integrity sha512-oIWu0hLKmDS+rOmjud2Z1CaDXtmxKSJF4937dSNLf/vNkxxjJA/6HapSfKqsraLnekI9DLP8uop5HnCHC++Abw==
+aws-sdk@^2.803.0:
+  version "2.804.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.804.0.tgz#ff7e6f91b86b4878ec69e3de895c10eb8203fc4b"
+  integrity sha512-a02pZdjL06MunElAZPPEjpghOp/ZA+16f+t4imh1k9FCDpsNVQrT23HRq/PMvRADA5uZZRkYwX8r9o6oH/1RlA==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
