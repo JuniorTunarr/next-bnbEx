@@ -21,6 +21,7 @@ const app = ({ Component, pageProps }: AppProps) => {
 app.getInitialProps = async (context: AppContext) => {
   const appInitialProps = await App.getInitialProps(context);
   const cookieObject = cookieStringToObject(context.ctx.req?.headers.cookie);
+  console.log(cookieObject);
   const { store } = context.ctx;
   const { isLogged } = store.getState().user;
   try {

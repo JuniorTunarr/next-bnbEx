@@ -38,7 +38,7 @@ const Container = styled.div<InputContainerProps>`
     height: 46px;
   }
   .input-error-message {
-    margin-top: 8px;
+    margin-top: 5px;
     font-weight: 600;
     font-size: 14px;
     color: ${palette.tawny};
@@ -87,8 +87,7 @@ const Input: React.FC<IProps> = ({
     <Container
       iconExist={!!icon}
       isValid={isValid}
-      useValidation={validateMode && useValidation}
-    >
+      useValidation={validateMode && useValidation}>
       {label && (
         <label>
           <span>{label}</span>

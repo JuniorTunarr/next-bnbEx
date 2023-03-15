@@ -4,9 +4,11 @@ import { UserType } from "../../types/user";
 //* 회원가입 body
 interface SingUpAPIBody {
   email: string;
-  firstname: string;
-  lastname: string;
+  name: string;
+  nickname: string;
+  phone: number | string;
   password: string;
+  passwordConfirm: string;
   birthday: string;
 }
 

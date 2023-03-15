@@ -91,7 +91,7 @@ const Container = styled.div<SelectorContainerProps>`
   }
 
   .selector-warning {
-    margin-top: 8px;
+    margin-top: 5px;
     display: flex;
     align-items: center;
 
@@ -99,7 +99,7 @@ const Container = styled.div<SelectorContainerProps>`
       margin-right: 4px;
     }
     p {
-      font-size: 12px;
+      font-size: 10px;
       color: ${palette.davidson_orange};
     }
   }
@@ -131,8 +131,7 @@ const Selector: React.FC<IProps> = ({
     <Container
       isValid={!!isValid}
       validateMode={useValidation && validateMode}
-      type={type}
-    >
+      type={type}>
       <label>
         {label && <span>{label}</span>}
         <select {...props}>

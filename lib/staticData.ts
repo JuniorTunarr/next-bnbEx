@@ -16,11 +16,16 @@ export const monthList = [
   "12월",
 ];
 
-//* 1부터 31까지
-export const dayList = Array.from(Array(31), (_, i) => String(i + 1));
+export const genderList = ["여성", "남성"];
 
-//* 2020년부터 1900년까지
-export const yearList = Array.from(Array(121), (_, i) => String(2020 - i));
+//* 1부터 31까지
+export const dayList = Array.from(Array(31), (_, i) => `${String(i + 1)}일`);
+
+//* 2004년부터 1900년까지
+export const yearList = Array.from(
+  Array(104),
+  (_, i) => `${String(2004 - i)}년`
+);
 
 //* 숙소 큰 범위의 건물유형
 export const largeBuildingTypeList = [
