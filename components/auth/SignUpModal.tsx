@@ -195,6 +195,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     register,
     setValue,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({ mode: "onChange", resolver: yupResolver(signUpSchema) });
   const dispatch = useDispatch();
@@ -446,10 +447,12 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     }
   };
 
-  const handleValidation = () => {
-    // validate form here
-    if (existingEmail === "") {
+  const handleValidation = async (data: any) => {
+    try {
+      await signUpSchema.validate(data, { abortEarly: false });
       setIsValidationReady(true);
+    } catch (error) {
+      setError(error.inner);
     }
   };
   //* firestore에 email 검증
@@ -499,19 +502,12 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           onFocus={onFocusId}
           onBlur={() => {
             setIdFocused(false);
-            handleValidation();
+            handleValidation({ email });
           }}
           useValidation
           errorMessage="이메일이 필요합니다."
         />
-        {idFocused && (
-          <>
-            <PasswordWarning
-              isValid={isIdEmailForm(email)}
-              text="@를 포함하여 이메일 형식으로 적어주세요."
-            />
-          </>
-        )}
+        {errors.email && <p>{errors.email.message}</p>}
       </div>
       <div id="2" style={{ display: currentId === 2 ? "block" : "none" }}>
         <div className="input-wrapper sign-up-password-input-wrapper">
