@@ -11,7 +11,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       res.statusCode = 204;
       return res.end();
     }
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
     return res.send(e.message);
   }

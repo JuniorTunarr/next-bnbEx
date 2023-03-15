@@ -6,8 +6,12 @@ import { UserState } from "../types/reduxState";
 const initialState: UserState = {
   id: 0,
   email: "",
-  lastname: "",
+  name: "",
   firstname: "",
+  lastname: "",
+  phone: 0,
+  nickname: "",
+  gender: "",
   birthday: "",
   isLogged: false,
   profileImage: "",

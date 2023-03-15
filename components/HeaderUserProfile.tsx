@@ -19,7 +19,8 @@ const HeaderUserProfile: React.FC = () => {
     try {
       await logoutAPI();
       dispatch(userActions.initUser());
-    } catch (e) {
+    } catch (e: any) {
+      // eslint-disable-next-line no-console
       console.log(e.message);
     }
   };
@@ -30,13 +31,11 @@ const HeaderUserProfile: React.FC = () => {
         if (isUsermenuOpened) {
           setIsUsermenuOpened(false);
         }
-      }}
-    >
+      }}>
       <button
         className="header-user-profile"
         type="button"
-        onClick={() => setIsUsermenuOpened(!isUsermenuOpened)}
-      >
+        onClick={() => setIsUsermenuOpened(!isUsermenuOpened)}>
         <HamburgerIcon />
         <img
           src={userProfileImage}
@@ -52,8 +51,7 @@ const HeaderUserProfile: React.FC = () => {
               role="presentation"
               onClick={() => {
                 setIsUsermenuOpened(false);
-              }}
-            >
+              }}>
               <li>숙소 등록하기</li>
             </a>
           </Link>

@@ -47,6 +47,7 @@ module.exports = {
     "no-confusing-arrow": "off",
     "react/jsx-curly-newline": "off",
     indent: "off",
+    "react/jsx-closing-bracket-location": "off",
     "react/jsx-filename-extension": [
       1,
       { extensions: [".js", ".jsx", ".tsx"] }, //jsx사용가능한 확장자 설정

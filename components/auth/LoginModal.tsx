@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-closing-bracket-location */
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
@@ -94,8 +95,9 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
         const { data } = await loginAPI(loginBody);
         dispatch(userActions.setLoggedUser(data));
         closeModal();
-      } catch (e) {
-        console.log(e.response);
+      } catch (error: any) {
+        // eslint-disable-next-line no-console
+        console.log(error);
       }
     }
   };
@@ -149,8 +151,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
         <span
           className="login-modal-set-signup"
           role="presentation"
-          onClick={changeToSignUpModal}
-        >
+          onClick={changeToSignUpModal}>
           회원가입
         </span>
       </p>

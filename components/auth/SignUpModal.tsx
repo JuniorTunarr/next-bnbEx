@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   collection,
   addDoc,
@@ -20,11 +21,11 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
+import * as Yup from "yup";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "@firebase/auth";
-import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
 import MailIcon from "../../public/static/svg/auth/mail.svg";
@@ -121,11 +122,6 @@ const Container = styled.form`
 
 interface IProps {
   closeModal: () => void;
-  placeholder: string;
-  type: string;
-  icon: ReactElement;
-  value: string;
-  useValidation?: boolean;
 }
 
 //*비밀번호 최수 자리수
@@ -137,6 +133,39 @@ const disabledDays = ["일"];
 //* 선택할 수 없는 년 option
 const disabledYears = ["년"];
 const disabledGender = ["성별"];
+
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
+// eslint-disable-next-line no-undef
+const signUpSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("@를 포함하여 이메일 형식으로 작성해주세요.")
+    .required("이메일을 입력해주세요.")
+    .test("uniqueEmail", "이미 등록된 이메일입니다.", async (value) => {
+      const q = query(collection(db, "user"), where("email", "==", value));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.empty;
+    }),
+  name: Yup.string().required("이름을 입력해주세요."),
+  nickname: Yup.string()
+    .required("Please enter your nickname.")
+    .min(2, "닉네임은 최소 2글자로 작성해주세요.")
+    .max(6, "닉네임은 최대 6글자로 작성해주세요.")
+    .test("uniqueNickname", "이미 사용중인 닉네임입니다.", async (value) => {
+      const q = query(collection(db, "user"), where("nickname", "==", value));
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.empty;
+    }),
+  phone: Yup.string().required("Please enter your phone number."),
+  password: Yup.string()
+    .matches(
+      passwordRegex,
+      "비밀번호는 영문+숫자를 포함한 8-16자리로 입력해주세요"
+    )
+    .required("비밀번호를 입력해주세요."),
+  passwordConfirm: Yup.string()
+    .oneOf([Yup.ref("password"), undefined], "비밀번호가 일치하지 않습니다.")
+    .required("비밀번호를 다시 입력해주세요."),
+});
 
 const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
   closeModal,
@@ -164,9 +193,10 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
   const [isValidationReady, setIsValidationReady] = useState(false);
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange", resolver: yupResolver(signUpSchema) });
   const dispatch = useDispatch();
   const { setValidateMode } = useValidateMode();
   //*비밀번호 숨김 토글하기
@@ -355,6 +385,16 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     setCurrentId(currentId - 1);
   };
 
+  //  yup + onChange 동시에 써보기
+  const handleChange = (e: any) => {
+    setValue(e.target.name, e.target.value);
+  };
+  // onchange 핸들러
+  const handleEmailChange = (event: any) => {
+    onChangeEmail(event);
+    handleChange(event);
+  };
+
   //* 회원가입 폼 제출하기
   const onSubmitSignUp = async (data: any) => {
     if (validateSignUpForm()) {
@@ -455,7 +495,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           icon={<MailIcon />}
           isValid={!!email && !isIdEmailForm(email)}
           value={email}
-          onChange={onChangeEmail}
+          onChange={handleEmailChange}
           onFocus={onFocusId}
           onBlur={() => {
             setIdFocused(false);

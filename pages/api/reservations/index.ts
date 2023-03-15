@@ -49,7 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       Data.reservation.write([...reservations, reservation]);
       res.statusCode = 201;
       return res.end();
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
       return res.send(e.message);
     }
