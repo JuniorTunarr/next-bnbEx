@@ -17,11 +17,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.statusCode = 400;
         return res.send("access_token이 없습니다.");
       }
-      const userId = jwt.verify(accessToken, process.env.JWT_SECRET!);
+      const { token } = jwt.verify(accessToken, process.env.JWT_SECRET!);
 
       const db = getFirestore();
       const usersRef = collection(db, "user");
-      const q = query(usersRef, where("id", "==", userId));
+      const q = query(usersRef, where("token", "==", token));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {

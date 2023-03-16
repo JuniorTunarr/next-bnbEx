@@ -6,7 +6,7 @@ import {
   collection,
   query,
   where,
-  getDocs,
+  getDocs, doc, updateDoc
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
 
@@ -36,6 +36,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const token = jwt.sign(String(user.id), process.env.JWT_SECRET!);
+      console.log(token);
+      const userDocRef = doc(db, "user", querySnapshot.docs[0].id);
+      await updateDoc(userDocRef, { token });
       res.setHeader(
         "Set-Cookie",
         `access_token=${token}; path=/; expires=${new Date(
