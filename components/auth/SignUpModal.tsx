@@ -37,6 +37,7 @@ import {
   signInWithEmailAndPassword,
 } from "@firebase/auth";
 import { useForm } from "react-hook-form";
+import WarningIcon from "../../public/static/svg/common/warning.svg";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
 import MailIcon from "../../public/static/svg/auth/mail.svg";
 import PersonIcon from "../../public/static/svg/auth/person.svg";
@@ -68,7 +69,8 @@ const Container = styled.form`
         color: #008A05;
       }
       &.error {
-        color: #ff2727;
+        color: #c13515;
+        vertical-align: bottom;
       }
     }
   .mordal-close-x-icon {
@@ -204,7 +206,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   const [birthDay, setBirthDay] = useState<string | undefined>();
   const [birthMonth, setBirthMonth] = useState<string | undefined>();
   const [gender, setGender] = useState<string | undefined>();
-  const [passwordFocused, setPasswordFocused] = useState(false);
+
   const [newAccount, setNewAccount] = useState(true);
 
   const [currentId, setCurrentId] = useState(1);
@@ -246,36 +248,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   const isIdEmailForm = useMemo(() => {
     return (email: string) => emailRegex.test(email);
   }, []);
-  //* 비밀번호 인풋 포커스 되었을때
-  const onFocusPassword = useCallback(() => {
-    setPasswordFocused(true);
-  }, [passwordFocused]);
-
-  //* password가 이름이나 이메일을 포함하는지
-  const isPasswordHasNameOrEmail = useMemo(
-    () =>
-      !password ||
-      !name ||
-      password.includes(name) ||
-      password.includes(email.split("@")[0]),
-    [password, name, email]
-  );
-
-  //* 비밀번호가 최소 자리수 이상인지
-  const isPasswordOverMinLength = useMemo(
-    () => password.length >= PASSWORD_MIN_LENGTH,
-    [password]
-  );
-
-  //* 비밀번호가 숫자나 특수기호를 포함하는지
-  const isPasswordHasNumberOrSymbol = useMemo(
-    () =>
-      !(
-        /[{}[\]/?.,;:|)*~`!^\-_+<>@#$%&\\=('"]/g.test(password) ||
-        /[0-9]/g.test(password)
-      ),
-    [password]
-  );
 
   //* 이메일 주소 변경시
   const onChangeEmail = useCallback(
@@ -286,11 +258,11 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
       setEmail(emailValue);
 
       if (!emailRegex.test(emailValue)) {
-        setEmailMessage("이메일 형식이 틀렸어요! 다시 확인해주세요 ㅜ ㅜ");
+        setEmailMessage("이메일 형식이 아닙니다. 다시 확인해주세요.");
         setIsEmail(false);
         setIsValidationReady(false);
       } else {
-        setEmailMessage("사용가능한 이메일입니다.)");
+        setEmailMessage("사용가능한 이메일입니다.");
         setIsEmail(true);
         setIsValidationReady(true);
       }
@@ -469,6 +441,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
 
   const handlePrevClick = () => {
     setCurrentId(currentId - 1);
+    setIsValidationReady(true);
   };
 
   //* 회원가입 폼 제출하기
@@ -488,7 +461,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
             ""
           )}-${birthDay!.replace("일", "")}`,
           gender,
-          createdAt: serverTimestamp(),
         };
         if (newAccount) {
           // create account
@@ -498,25 +470,26 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
             password
           );
           // firebase에 올릴 양식
-          const docRef = await addDoc(collection(db, "user"), {
-            email,
-            name,
-            nickname,
-            phone,
-            birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
-              "월",
-              ""
-            )}-${birthDay!.replace("일", "")}T00:00:00.000Z`,
-            gender,
-          });
+          // const docRef = await addDoc(collection(db, "user"), {
+          //   email,
+          //   name,
+          //   nickname,
+          //   phone,
+          //   birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
+          //     "월",
+          //     ""
+          //   )}-${birthDay!.replace("일", "")}`,
+          //   gender,
+          //   createdAt: serverTimestamp(),
+          // });
           alert("회원 가입이 완료되었습니다.");
-          closeModal();
         } else {
           userData = await signInWithEmailAndPassword(fbAuth, email, password);
           alert("이미 가입된 계정이 있습니다.");
         }
         const { data } = await signupAPI(signUpBody);
         dispatch(userActions.setLoggedUser(data));
+        closeModal();
       } catch (e) {
         console.log(e);
       }
@@ -549,8 +522,9 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         className="input-wrapper"
         id="1"
         style={{ display: currentId === 1 ? "block" : "none" }}>
+        <p className="sign-up-birthdat-label">이메일</p>
         <Input
-          placeholder="이메일"
+          placeholder="@를 포함하여 입력해주세요."
           type="email"
           icon={<MailIcon />}
           isValid={!!email && isIdEmailForm(email)}
@@ -559,12 +533,16 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           useValidation
         />
         {email.length > 0 && (
-          <p className={`message ${isEmail ? "success" : "error"}`}>
-            {emailMessage}
-          </p>
+          <div>
+            {!isEmail ? <WarningIcon /> : ""}
+            <span className={`message ${isEmail ? "success" : "error"}`}>
+              {emailMessage}
+            </span>
+          </div>
         )}
       </div>
       <div id="2" style={{ display: currentId === 2 ? "block" : "none" }}>
+        <p className="sign-up-birthdat-label">비밀번호</p>
         <div className="input-wrapper sign-up-password-input-wrapper">
           <Input
             placeholder="비밀번호: 영문+숫자+특수문자 포함 8자리 이상"
@@ -583,15 +561,19 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           />
         </div>
         {password.length > 0 && (
-          <p className={`message ${isPassword ? "success" : "error"}`}>
-            {passwordMessage}
-          </p>
+          <div>
+            {!isPassword ? <WarningIcon /> : ""}
+            <span className={`message ${isPassword ? "success" : "error"}`}>
+              {passwordMessage}
+            </span>
+          </div>
         )}
         <div
           className="input-wrapper sign-up-password-input-wrapper"
           style={{ marginTop: "10px" }}>
+          <p className="sign-up-birthdat-label">비밀번호 확인</p>
           <Input
-            placeholder="비밀번호 확인"
+            placeholder="비밀번호와 일치하는지 확인합니다."
             type={hidePassword ? "password" : "text"}
             icon={
               hidePassword ? (
@@ -607,9 +589,13 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           />
         </div>
         {passwordConfirm.length > 0 && (
-          <p className={`message ${isPasswordConfirm ? "success" : "error"}`}>
-            {passwordConfirmMessage}
-          </p>
+          <div>
+            {!isPasswordConfirm ? <WarningIcon /> : ""}
+            <span
+              className={`message ${isPasswordConfirm ? "success" : "error"}`}>
+              {passwordConfirmMessage}
+            </span>
+          </div>
         )}
       </div>
 
@@ -617,8 +603,9 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         className="input-wrapper"
         id="3"
         style={{ display: currentId === 3 ? "block" : "none" }}>
+        <p className="sign-up-birthdat-label">이름</p>
         <Input
-          placeholder="이름"
+          placeholder="2~5자리로 입력해주세요."
           icon={<PersonIcon />}
           value={name}
           onChange={onChangeName}
@@ -627,16 +614,20 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         />
       </div>
       {name.length > 0 && (
-        <p className={`message ${isName ? "success" : "error"}`}>
-          {nameMessage}
-        </p>
+        <div>
+          {!isName ? <WarningIcon /> : ""}
+          <span className={`message ${isName ? "success" : "error"}`}>
+            {nameMessage}
+          </span>
+        </div>
       )}
       <div
         className="input-wrapper"
         id="4"
         style={{ display: currentId === 4 ? "block" : "none" }}>
+        <p className="sign-up-birthdat-label">닉네임</p>
         <Input
-          placeholder="닉네임"
+          placeholder="2~6자리로 입력해주세요."
           icon={<PersonIcon />}
           value={nickname}
           onChange={onChangeNickname}
@@ -644,9 +635,12 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           isValid={!!nickname && isNickname}
         />
         {nickname.length > 0 && (
-          <p className={`message ${isNickname ? "success" : "error"}`}>
-            {nicknameMessage}
-          </p>
+          <div>
+            {!isNickname ? <WarningIcon /> : ""}
+            <span className={`message ${isNickname ? "success" : "error"}`}>
+              {nicknameMessage}
+            </span>
+          </div>
         )}
       </div>
 
@@ -654,8 +648,9 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         className="input-wrapper"
         id="5"
         style={{ display: currentId === 5 ? "block" : "none" }}>
+        <p className="sign-up-birthdat-label">전화번호</p>
         <Input
-          placeholder="전화번호"
+          placeholder="-를 제외하고 입력해주세요."
           icon={<PersonIcon />}
           value={phone}
           type="number"
@@ -664,9 +659,12 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           isValid={!!phone && isPhone}
         />
         {phone.length > 0 && (
-          <p className={`message ${isPhone ? "success" : "error"}`}>
-            {phoneMessage}
-          </p>
+          <div>
+            {!isPhone ? <WarningIcon /> : ""}
+            <span className={`message ${isPhone ? "success" : "error"}`}>
+              {phoneMessage}
+            </span>
+          </div>
         )}
       </div>
       <div id="6" style={{ display: currentId === 6 ? "block" : "none" }}>
@@ -710,6 +708,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         </div>
         <div className="sign-up-modal-birthday-selectors">
           <div className="sign-up-gender-selector">
+            <p className="sign-up-birthdat-label">성별</p>
             <Selector
               options={genderList}
               disabledOptions={disabledGender}

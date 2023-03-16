@@ -1,86 +1,81 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Data from "../../../lib/data";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import user from "../../../lib/data/user";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+} from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const {
-      email,
-      name,
-      password,
-      passwordConfirm,
-      nickname,
-      phone,
-      birthday,
-    } = req.body;
-    if (
-      !email ||
-      !name ||
-      !nickname ||
-      !password ||
-      !passwordConfirm ||
-      !birthday ||
-      !phone
-    ) {
-      res.statusCode = 400;
-      return res.send("필수 데이터가 없습니다.");
-    }
-
-    const userExist = Data.user.exist({ email });
-    if (userExist) {
-      res.statusCode = 409;
-      return res.send("이미 가입된 이메일 입니다.");
-    }
-
-    const hashedPassword = bcrypt.hashSync(password, 8);
-
-    const users = Data.user.getList();
-    let userId;
-    if (users.length === 0) {
-      userId = 1;
-    } else {
-      userId = users[users.length - 1].id + 1;
-    }
-    const newUser: StoredUserType = {
-      id: userId,
-      email,
-      name,
-      nickname,
-      phone,
-      password: hashedPassword,
-      passwordConfirm: hashedPassword,
-      birthday,
-      profileImage: "/static/image/user/default_user_profile_image.jpg",
-      gender: "",
-    };
-
-    Data.user.write([...users, newUser]);
-
-    await new Promise((resolve) => {
-      const token = jwt.sign(String(newUser.id), process.env.JWT_SECRET!);
-      const Expires = new Date(
-        Date.now() + 60 * 60 * 24 * 1000 * 3
-      ).toUTCString();
-      res.setHeader(
-        "Set-Cookie",
-        `access_token=${token}; path=/; Expires=${Expires}; HttpOnly;`
-      );
-      resolve(token);
-      // return res.end();
-    });
-
-    const newUserWithoutPassword: Partial<Pick<StoredUserType, "password">> =
-      newUser;
-
-    delete newUserWithoutPassword.password;
-    res.statusCode = 200;
-    return res.send(newUser);
+  if (req.method !== "POST") {
+    return res.status(405).end(); // Method Not Allowed
   }
-  res.statusCode = 405;
 
-  return res.end();
+  const {
+    email,
+    name,
+    password,
+    passwordConfirm,
+    nickname,
+    phone,
+    birthday,
+    gender,
+  } = req.body;
+
+  if (
+    !email ||
+    !name ||
+    !nickname ||
+    !password ||
+    !passwordConfirm ||
+    !birthday ||
+    !phone ||
+    !gender
+  ) {
+    return res.status(400).send("Required data is missing.");
+  }
+
+  const db = getFirestore();
+  const usersRef = collection(db, "user");
+  const q = query(usersRef, where("email", "==", email));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.docs.length > 0) {
+    return res.status(409).send("This email is already registered.");
+  }
+
+  const hashedPassword = bcrypt.hashSync(password, 8);
+  const newUser: StoredUserType = {
+    id: querySnapshot.docs.length + 1,
+    email,
+    name,
+    nickname,
+    phone,
+    password: hashedPassword,
+    passwordConfirm: hashedPassword,
+    birthday,
+    profileImage: "/static/image/user/default_user_profile_image.jpg",
+    gender,
+  };
+
+  try {
+    const docRef = await addDoc(usersRef, newUser);
+    const token = jwt.sign(String(newUser.id), process.env.JWT_SECRET!);
+    const Expires = new Date(
+      Date.now() + 60 * 60 * 24 * 1000 * 3
+    ).toUTCString();
+    res.setHeader(
+      "Set-Cookie",
+      `access_token=${token}; path=/; Expires=${Expires}; HttpOnly;`
+    );
+    res.status(200).json({ ...newUser, password: undefined });
+  } catch (error) {
+    console.error("Error adding user to Firestore:", error);
+    res.status(500).send("Server error.");
+  }
 };

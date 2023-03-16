@@ -2,6 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import { useSelector } from "../../store";
 import palette from "../../styles/palette";
+import WarningIcon from "../../public/static/svg/common/warning.svg";
 
 type InputContainerProps = {
   iconExist: boolean;
@@ -99,6 +100,12 @@ const Input: React.FC<IProps> = ({
       {useValidation && validateMode && !isValid && errorMessage && (
         <p className="input-error-message">{errorMessage}</p>
       )}
+      {/* {useValidation && validateMode && !isValid && (
+        <div className="selector-warning">
+          <WarningIcon />
+          <p>{errorMessage}</p>
+        </div>
+      )} */}
     </Container>
   );
 };
