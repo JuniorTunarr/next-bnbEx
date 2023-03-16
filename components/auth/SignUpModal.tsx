@@ -53,7 +53,7 @@ import { userActions } from "../../store/user";
 import useValidateMode from "../../hooks/useValidateMode";
 import PasswordWarning from "./PasswordWarning";
 import { authActions } from "../../store/auth";
-import { db, fbAuth } from "../../firebase.config";
+import { db, fbAuth } from "../../firebase";
 
 const Container = styled.form`
   width: 532px;
