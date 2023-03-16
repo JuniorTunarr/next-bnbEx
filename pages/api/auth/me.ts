@@ -1,3 +1,4 @@
+// code
 import { NextApiResponse, NextApiRequest } from "next";
 import jwt from "jsonwebtoken";
 import {
@@ -17,7 +18,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.statusCode = 400;
         return res.send("access_token이 없습니다.");
       }
-      const { token } = jwt.verify(accessToken, process.env.JWT_SECRET!);
+
+      const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!);
+      if (typeof decoded !== "object" || !(decoded as any).token) {
+        res.statusCode = 400;
+        return res.send("Invalid access_token.");
+      }
+      const { token } = decoded as any;
 
       const db = getFirestore();
       const usersRef = collection(db, "user");

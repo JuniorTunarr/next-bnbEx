@@ -1,3 +1,5 @@
+// login.ts
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -6,7 +8,9 @@ import {
   collection,
   query,
   where,
-  getDocs, doc, updateDoc
+  getDocs,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
 
@@ -35,14 +39,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.send("Password does not match.");
       }
 
-      const token = jwt.sign(String(user.id), process.env.JWT_SECRET!);
+      const token = jwt.sign(
+        { id: String(user.id), token: String(user.token) },
+        process.env.JWT_SECRET!
+      );
       console.log(token);
       const userDocRef = doc(db, "user", querySnapshot.docs[0].id);
       await updateDoc(userDocRef, { token });
       res.setHeader(
         "Set-Cookie",
         `access_token=${token}; path=/; expires=${new Date(
-          Date.now() + 60 * 60 * 24 * 1000 * 3 //3 days
+          Date.now() + 60 * 60 * 24 * 1000 * 3 // 3 days
         )}; httponly`
       );
 
