@@ -1,3 +1,13 @@
+/* eslint-disable react/jsx-indent */
+/* eslint-disable function-paren-newline */
+/* eslint-disable quotes */
+/* eslint-disable keyword-spacing */
+/* eslint-disable space-before-blocks */
+/* eslint-disable @typescript-eslint/quotes */
+// |Great! How can I assist you today?
+// |
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable no-multiple-empty-lines */
 /* eslint-disable react/jsx-closing-bracket-location */
 
 import React, {
@@ -49,7 +59,18 @@ const Container = styled.form`
   padding: 45px;
   background-color: white;
   z-index: 11;
-
+  .message {
+      font-weight: 500;
+      font-size: 1rem;
+      line-height: 24px;
+      letter-spacing: -1px;
+      &.success {
+        color: #008A05;
+      }
+      &.error {
+        color: #ff2727;
+      }
+    }
   .mordal-close-x-icon {
     cursor: pointer;
     display: block;
@@ -167,11 +188,11 @@ const signUpSchema = Yup.object().shape({
     .required("비밀번호를 다시 입력해주세요."),
 });
 
-const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
-  closeModal,
-}) => {
+const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
+  { closeModal },
+  ref
+) => {
   const [email, setEmail] = useState("");
-
   const [name, setName] = useState("");
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
@@ -183,32 +204,42 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
   const [birthDay, setBirthDay] = useState<string | undefined>();
   const [birthMonth, setBirthMonth] = useState<string | undefined>();
   const [gender, setGender] = useState<string | undefined>();
-  const [idFocused, setIdFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [newAccount, setNewAccount] = useState(true);
 
-  const [existingEmail, setExistingEmail] = useState("");
-  const [existingNickname, setExistingNickname] = useState("");
   const [currentId, setCurrentId] = useState(1);
   const [isValidationReady, setIsValidationReady] = useState(false);
+
+  //오류메시지 상태저장
+  const [nameMessage, setNameMessage] = useState<string>("");
+  const [emailMessage, setEmailMessage] = useState<string>("");
+  const [passwordMessage, setPasswordMessage] = useState<string>("");
+  const [passwordConfirmMessage, setPasswordConfirmMessage] =
+    useState<string>("");
+  const [nicknameMessage, setNicknameMessage] = useState<string>("");
+  const [phoneMessage, setPhoneMessage] = useState<string>("");
+
+  // 유효성 검사
+  const [isName, setIsName] = useState<boolean>(false);
+  const [isEmail, setIsEmail] = useState<boolean>(false);
+  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
+  const [isNickname, setIsNickname] = useState<boolean>(false);
+  const [isPhone, setIsPhone] = useState<boolean>(false);
+
   const {
     register,
     setValue,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm({ mode: "onChange", resolver: yupResolver(signUpSchema) });
   const dispatch = useDispatch();
+
   const { setValidateMode } = useValidateMode();
   //*비밀번호 숨김 토글하기
   const toggleHidePassword = useCallback(() => {
     setHidePassword(!hidePassword);
   }, [hidePassword]);
-
-  //* 아이디 인풋 포커스 되었을때
-  const onFocusId = useCallback(() => {
-    setIdFocused(true);
-  }, [idFocused]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   //* id가 이메일 형식인지
@@ -249,16 +280,92 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
   //* 이메일 주소 변경시
   const onChangeEmail = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const email = event.target.value;
-      setEmail(email);
+      const emailValue = event.target.value;
+      const emailRegex =
+        /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      setEmail(emailValue);
+
+      if (!emailRegex.test(emailValue)) {
+        setEmailMessage("이메일 형식이 틀렸어요! 다시 확인해주세요 ㅜ ㅜ");
+        setIsEmail(false);
+        setIsValidationReady(false);
+      } else {
+        setEmailMessage("사용가능한 이메일입니다.)");
+        setIsEmail(true);
+        setIsValidationReady(true);
+      }
+      // Check if email is already registered
+      const q = query(collection(db, "user"), where("email", "==", emailValue));
+      getDocs(q)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            setEmailMessage("이미 등록된 이메일입니다.");
+            setIsEmail(false);
+            setIsValidationReady(false);
+          }
+          return querySnapshot;
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
     },
     []
+  );
+  //* 비밀번호 변경시
+  const onChangePassword = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const passwordValue = event.target.value;
+      const passwordRegex =
+        /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+      setPassword(passwordValue);
+      if (!passwordRegex.test(passwordValue)) {
+        setPasswordMessage(
+          "영문+숫자+특수문자 조합으로 8자리 이상으로 입력해주세요."
+        );
+        setIsPassword(false);
+        setIsValidationReady(false);
+      } else {
+        setPasswordMessage("사용가능한 비밀번호입니다.");
+        setIsPassword(true);
+        setIsValidationReady(true);
+      }
+    },
+    []
+  );
+  //* 비밀번호확인 변경시
+  const onChangePasswordConfirm = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const passwordConfirmValue = event.target.value;
+      setPasswordConfirm(passwordConfirmValue);
+
+      if (password === passwordConfirmValue) {
+        setPasswordConfirmMessage("비밀번호와 일치합니다.");
+        setIsPasswordConfirm(true);
+        setIsValidationReady(true);
+      } else {
+        setPasswordConfirmMessage(
+          "비밀번호와 일치하지 않습니다. 다시 확인해주세요."
+        );
+        setIsPasswordConfirm(false);
+        setIsValidationReady(false);
+      }
+    },
+    [password]
   );
 
   //* 이름 변경시
   const onChangeName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setName(event.target.value);
+      if (event.target.value.length < 2 || event.target.value.length > 6) {
+        setNameMessage("2글자 이상 6글자 미만으로 입력해주세요.");
+        setIsName(false);
+        setIsValidationReady(false);
+      } else {
+        setNameMessage("");
+        setIsName(true);
+        setIsValidationReady(true);
+      }
     },
     []
   );
@@ -266,28 +373,34 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
   const onChangeNickname = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setNickname(event.target.value);
+      if (event.target.value.length < 2 || event.target.value.length > 6) {
+        setNicknameMessage("2글자 이상 6글자 미만으로 입력해주세요.");
+        setIsNickname(false);
+        setIsValidationReady(false);
+      } else {
+        setNicknameMessage("");
+        setIsNickname(true);
+        setIsValidationReady(true);
+      }
     },
     []
   );
   //* 휴대폰 변경시
   const onChangePhone = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setPhone(event.target.value);
-    },
-    []
-  );
+      const phoneValue = event.target.value;
+      setPhone(phoneValue);
+      const phoneRegex = /^01([0|1|6|7|8|9])([0-9]{4})([0-9]{4})$/;
 
-  //* 비밀번호 변경시
-  const onChangePassword = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(event.target.value);
-    },
-    []
-  );
-  //* 비밀번호확인 변경시
-  const onChangePasswordConfirm = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setPasswordConfirm(event.target.value);
+      if (!phoneRegex.test(phoneValue)) {
+        setPhoneMessage("전화번호를 다시 확인해주세요.");
+        setIsPhone(false);
+        setIsValidationReady(false);
+      } else {
+        setPhoneMessage("사용가능한 번호입니다.");
+        setIsPhone(true);
+        setIsValidationReady(true);
+      }
     },
     []
   );
@@ -330,14 +443,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     if (!email || !name || !nickname || !password || !passwordConfirm) {
       return false;
     }
-    //* 비밀번호가 올바르지 않다면
-    if (
-      isPasswordHasNameOrEmail ||
-      !isPasswordOverMinLength ||
-      isPasswordHasNumberOrSymbol
-    ) {
-      return false;
-    }
     //* 생년월일 셀렉터 값이 없다면
     if (!birthDay || !birthMonth || !birthYear || !gender) {
       return false;
@@ -352,48 +457,18 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     };
   }, []);
 
-  // db에서 일치하는 값이 있으면 저장
-  useEffect(() => {
-    const fetchEmail = async () => {
-      const q = query(
-        collection(db, "users"),
-        where("email", "==", existingEmail)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        setExistingEmail(querySnapshot.docs[0].data().email);
-      }
-    };
-    const fetchNickname = async () => {
-      const q = query(
-        collection(db, "users"),
-        where("nickname", "==", existingNickname)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        setExistingNickname(querySnapshot.docs[0].data().nickname);
-      }
-    };
-    fetchEmail();
-    fetchNickname();
-  }, [existingEmail, existingNickname]);
+  //* 로그인 모달로 변경하기
+  const changeToLoginModal = useCallback(() => {
+    dispatch(authActions.setAuthMode("login"));
+  }, []);
 
   const handleNextClick = () => {
     setCurrentId(currentId + 1);
+    setIsValidationReady(false);
   };
 
   const handlePrevClick = () => {
     setCurrentId(currentId - 1);
-  };
-
-  //  yup + onChange 동시에 써보기
-  const handleChange = (e: any) => {
-    setValue(e.target.name, e.target.value);
-  };
-  // onchange 핸들러
-  const handleEmailChange = (event: any) => {
-    onChangeEmail(event);
-    handleChange(event);
   };
 
   //* 회원가입 폼 제출하기
@@ -411,8 +486,9 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
             "월",
             ""
-          )}-${birthDay!.replace("일", "")}T00:00:00.000Z`,
+          )}-${birthDay!.replace("일", "")}`,
           gender,
+          createdAt: serverTimestamp(),
         };
         if (newAccount) {
           // create account
@@ -447,33 +523,14 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
     }
   };
 
-  const handleValidation = async (data: any) => {
-    try {
-      await signUpSchema.validate(data, { abortEarly: false });
+  // submit 활성화
+  useEffect(() => {
+    if (!!birthDay && !!birthMonth && !!birthYear && !!gender) {
       setIsValidationReady(true);
-    } catch (error) {
-      setError(error.inner);
+    } else {
+      setIsValidationReady(false);
     }
-  };
-  //* firestore에 email 검증
-  const validateEmail = async (value: any, setError: any) => {
-    const q = query(collection(db, "users"), where("email", "==", value));
-    const querySnapshot = await getDocs(q);
-    if (!querySnapshot.empty) {
-      setError("email", {
-        type: "manual",
-        message: "이미 존재하는 이메일입니다",
-      });
-      return false; // return false to indicate validation failed
-    }
-    setExistingEmail(value);
-    return true; // return true to indicate validation passed
-  };
-
-  //* 로그인 모달로 변경하기
-  const changeToLoginModal = useCallback(() => {
-    dispatch(authActions.setAuthMode("login"));
-  }, []);
+  }, [birthDay, birthMonth, birthYear, gender]);
 
   return (
     <Container onSubmit={handleSubmit(onSubmitSignUp)}>
@@ -496,23 +553,21 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           placeholder="이메일"
           type="email"
           icon={<MailIcon />}
-          isValid={!!email && !isIdEmailForm(email)}
+          isValid={!!email && isIdEmailForm(email)}
           value={email}
-          onChange={handleEmailChange}
-          onFocus={onFocusId}
-          onBlur={() => {
-            setIdFocused(false);
-            handleValidation({ email });
-          }}
+          onChange={onChangeEmail}
           useValidation
-          errorMessage="이메일이 필요합니다."
         />
-        {errors.email && <p>{errors.email.message}</p>}
+        {email.length > 0 && (
+          <p className={`message ${isEmail ? "success" : "error"}`}>
+            {emailMessage}
+          </p>
+        )}
       </div>
       <div id="2" style={{ display: currentId === 2 ? "block" : "none" }}>
         <div className="input-wrapper sign-up-password-input-wrapper">
           <Input
-            placeholder="비밀번호 설정"
+            placeholder="비밀번호: 영문+숫자+특수문자 포함 8자리 이상"
             type={hidePassword ? "password" : "text"}
             icon={
               hidePassword ? (
@@ -524,25 +579,17 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
             value={password}
             onChange={onChangePassword}
             useValidation
-            isValid={isPasswordOverMinLength && !isPasswordHasNumberOrSymbol}
-            errorMessage="비밀번호가 양식에 맞지 않습니다"
-            onFocus={onFocusPassword}
-            onBlur={() => setPasswordFocused(false)}
+            isValid={!!password && isPassword}
           />
         </div>
-        {passwordFocused && (
-          <>
-            <PasswordWarning
-              isValid={!isPasswordOverMinLength}
-              text="최소 8자"
-            />
-            <PasswordWarning
-              isValid={isPasswordHasNumberOrSymbol}
-              text="숫자나 기호를 포함하세요."
-            />
-          </>
+        {password.length > 0 && (
+          <p className={`message ${isPassword ? "success" : "error"}`}>
+            {passwordMessage}
+          </p>
         )}
-        <div className="input-wrapper sign-up-password-input-wrapper">
+        <div
+          className="input-wrapper sign-up-password-input-wrapper"
+          style={{ marginTop: "10px" }}>
           <Input
             placeholder="비밀번호 확인"
             type={hidePassword ? "password" : "text"}
@@ -556,11 +603,14 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
             value={passwordConfirm}
             onChange={onChangePasswordConfirm}
             useValidation
-            isValid={!!passwordConfirm && password === passwordConfirm}
-            errorMessage="비밀번호가 일치하지 않습니다"
-            onFocus={onFocusPassword}
+            isValid={!!passwordConfirm && isPasswordConfirm}
           />
         </div>
+        {passwordConfirm.length > 0 && (
+          <p className={`message ${isPasswordConfirm ? "success" : "error"}`}>
+            {passwordConfirmMessage}
+          </p>
+        )}
       </div>
 
       <div
@@ -573,10 +623,14 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           value={name}
           onChange={onChangeName}
           useValidation
-          isValid={!!name}
-          errorMessage="이름을 입력해주세요"
+          isValid={!!name && isName}
         />
       </div>
+      {name.length > 0 && (
+        <p className={`message ${isName ? "success" : "error"}`}>
+          {nameMessage}
+        </p>
+      )}
       <div
         className="input-wrapper"
         id="4"
@@ -587,9 +641,13 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           value={nickname}
           onChange={onChangeNickname}
           useValidation
-          isValid={!!nickname}
-          errorMessage="닉네임을 입력해주세요"
+          isValid={!!nickname && isNickname}
         />
+        {nickname.length > 0 && (
+          <p className={`message ${isNickname ? "success" : "error"}`}>
+            {nicknameMessage}
+          </p>
+        )}
       </div>
 
       <div
@@ -603,15 +661,19 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
           type="number"
           onChange={onChangePhone}
           useValidation
-          isValid={!!phone}
-          errorMessage="전화번호를 입력하세요.(-제외)"
+          isValid={!!phone && isPhone}
         />
+        {phone.length > 0 && (
+          <p className={`message ${isPhone ? "success" : "error"}`}>
+            {phoneMessage}
+          </p>
+        )}
       </div>
       <div id="6" style={{ display: currentId === 6 ? "block" : "none" }}>
         <p className="sign-up-birthdat-label">생일</p>
         <p className="sign-up-modal-birthday-info">
           만 18세 이상의 성인만 회원으로 가입할 수 있습니다. 생일은 다른
-          에어비앤비 이용자에게 공개되지 않습니다.
+          퍼퓸투데이 이용자에게 공개되지 않습니다.
         </p>
 
         <div className="sign-up-modal-birthday-selectors">
@@ -686,14 +748,20 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = ({
         ) : (
           <Button
             type="submit"
+            onClick={onSubmitSignUp}
             color="bittersweet"
-            className="sign-up-previous-next-button">
+            disabled={!isValidationReady}
+            className="sign-up-previous-next-button"
+            style={{
+              backgroundColor: isValidationReady ? "#FF385C" : "gray",
+              color: "white",
+            }}>
             가입 하기
           </Button>
         )}
       </div>
       <p>
-        이미 에어비앤비 계정이 있나요?
+        이미 퍼퓸투데이 계정이 있나요?
         <span
           className="sign-up-modal-set-login"
           role="presentation"
