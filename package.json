@@ -31,6 +31,7 @@
     "lodash": "^4.17.20",
     "next": "^10.0.0",
     "next-redux-wrapper": "^6.0.2",
+    "node": "16.13",
     "react": "^17.0.1",
     "react-autosize-textarea": "^7.1.0",
     "react-datepicker": "^3.1.3",
