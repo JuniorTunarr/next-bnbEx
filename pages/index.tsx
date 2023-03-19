@@ -1,9 +1,14 @@
-import React from "react";
-import { NextPage } from "next";
+/* eslint-disable no-return-await */
+// pages/index.tsx
+
 import Home from "../components/home/Home";
+import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
+import { wrapper } from "../store";
 
-const index: NextPage = () => {
-  return <Home />;
-};
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (ctx) => {
+    return await getServerSidePropsWithAuth(ctx);
+  }
+);
 
-export default index;
+export default withAuth(Home);
