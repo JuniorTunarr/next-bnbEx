@@ -14,18 +14,29 @@ import { db } from "../../../firebase";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
-      const accessToken = req.headers.cookie;
-      if (!accessToken) {
+      // const accessToken = req.headers.cookie;
+      // if (!accessToken) {
+      //   res.statusCode = 400;
+      //   return res.send("access_token이 없습니다.");
+      // }
+
+      // const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!);
+      // if (typeof decoded !== "object" || !(decoded as any).token) {
+      //   res.statusCode = 400;
+      //   return res.send("Invalid access_token.");
+      // }
+      // const { token } = decoded as any;
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
         res.statusCode = 400;
-        return res.send("access_token이 없습니다.");
+        return res.send("Authorization header is missing.");
       }
 
-      const decoded = jwt.verify(accessToken, process.env.JWT_SECRET!);
-      if (typeof decoded !== "object" || !(decoded as any).token) {
+      const token = authHeader.split(" ")[1];
+      if (!token) {
         res.statusCode = 400;
-        return res.send("Invalid access_token.");
+        return res.send("Token is missing.");
       }
-      const { token } = decoded as any;
 
       const usersRef = collection(db, "user");
       const q = query(usersRef, where("token", "==", token));

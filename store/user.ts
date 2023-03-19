@@ -26,6 +26,10 @@ const user = createSlice({
       state = { ...action.payload, isLogged: true };
       return state;
     },
+    //* 로그인 상태 변경하기
+    setLoggedInStatus(state, action: PayloadAction<boolean>) {
+      state.isLogged = action.payload;
+    },
     //* 유저 초기화 하기
     initUser(state) {
       state = initialState;
