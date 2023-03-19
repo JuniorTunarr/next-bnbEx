@@ -1,6 +1,6 @@
+import cookie from "js-cookie";
 import axios from ".";
 import { UserType } from "../../types/user";
-
 //* 회원가입 body
 interface SingUpAPIBody {
   email: string;
@@ -21,7 +21,14 @@ export const loginAPI = (body: { email: string; password: string }) =>
   axios.post<UserType>("/api/auth/login", body);
 
 //* 쿠키의 access_token의 유저 정보 받아오는 api
-export const meAPI = () => axios.get("/api/auth/me");
+export const meAPI = () => {
+  const token = cookie.get("access_token");
+  return axios.get("/api/auth/me", {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+};
 
 //* 로그 아웃 api
 export const logoutAPI = () => axios.delete("/api/auth/logout");

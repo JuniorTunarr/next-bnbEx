@@ -6,6 +6,7 @@ import SearchRoomBar from "./searchRoomBar/SearchRoomBar";
 import palette from "../../styles/palette";
 import { RootState } from "../../store";
 import { userActions } from "../../store/user";
+import { meAPI } from "../../lib/api/auth";
 
 const Container = styled.div`
   width: 100%;
@@ -69,22 +70,14 @@ const Container = styled.div`
 const Home: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
-
   useEffect(() => {
     const fetchUserData = async () => {
       const token = cookie.get("access_token");
       if (token) {
         try {
-          const response = await fetch("/api/auth/me", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
+          const response = await meAPI();
+          if (response.status === 200) {
+            const userData = response.data;
             dispatch(userActions.setLoggedUser(userData));
           }
         } catch (error) {
