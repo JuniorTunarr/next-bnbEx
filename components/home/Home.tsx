@@ -1,12 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import cookie from "js-cookie";
 import SearchRoomBar from "./searchRoomBar/SearchRoomBar";
 import palette from "../../styles/palette";
-import { RootState } from "../../store";
-import { userActions } from "../../store/user";
-import { meAPI } from "../../lib/api/auth";
 
 const Container = styled.div`
   width: 100%;
@@ -68,36 +63,6 @@ const Container = styled.div`
 `;
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = cookie.get("access_token");
-      if (token) {
-        try {
-          const response = await fetch("/api/auth/me", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            dispatch(userActions.setLoggedUser(userData));
-            // Add this line to update the logged-in status
-            dispatch(userActions.setLoggedInStatus(true));
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [dispatch]);
-
   return (
     <Container>
       <p className="home-serach-bar-label">숙소</p>

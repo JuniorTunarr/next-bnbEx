@@ -1,11 +1,14 @@
-import React from "react";
+/* eslint-disable import/extensions */
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import cookie from "js-cookie";
 import styled from "styled-components";
 import Link from "next/link";
+import { userActions } from "../store/user";
+import { RootState, useSelector } from "../store";
 import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
 import AirbnbLogoTextIcon from "../public/static/svg/logo/logo_text.svg";
 import palette from "../styles/palette";
-import { useSelector } from "../store";
-
 import HeaderAuths from "./HeaderAuths";
 import HeaderUserProfile from "./HeaderUserProfile";
 
@@ -116,6 +119,36 @@ const Container = styled.div`
 
 const Header: React.FC = () => {
   const isLogged = useSelector((state) => state.user.isLogged);
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = cookie.get("access_token");
+      if (token) {
+        try {
+          const response = await fetch("/api/auth/me", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            dispatch(userActions.setLoggedUser(userData));
+            // Add this line to update the logged-in status
+            dispatch(userActions.setLoggedInStatus(true));
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [dispatch]);
   return (
     <Container>
       <Link href="/">
