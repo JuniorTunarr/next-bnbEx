@@ -75,10 +75,19 @@ const Home: React.FC = () => {
       const token = cookie.get("access_token");
       if (token) {
         try {
-          const response = await meAPI();
-          if (response.status === 200) {
-            const userData = response.data;
+          const response = await fetch("/api/auth/me", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
             dispatch(userActions.setLoggedUser(userData));
+            // Add this line to update the logged-in status
+            dispatch(userActions.setLoggedInStatus(true));
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
