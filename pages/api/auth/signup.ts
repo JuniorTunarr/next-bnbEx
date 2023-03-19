@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-spaces */
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -10,6 +11,7 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
+import { db } from "../../../firebase";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -40,7 +42,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).send("Required data is missing.");
   }
 
-  const db = getFirestore();
   const usersRef = collection(db, "user");
   const q = query(usersRef, where("email", "==", email));
   const querySnapshot = await getDocs(q);
