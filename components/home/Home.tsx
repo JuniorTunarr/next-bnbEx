@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SearchRoomBar from "./searchRoomBar/SearchRoomBar";
 import palette from "../../styles/palette";
 
+// 뭐가 문제지
 const Container = styled.div`
   width: 100%;
   padding: 0 80px;
