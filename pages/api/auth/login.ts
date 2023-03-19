@@ -13,6 +13,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
+import { db } from "../../../firebase";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
@@ -22,7 +23,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.statusCode = 400;
         return res.send("필수 데이터가 없습니다.");
       }
-      const db = getFirestore();
       const usersRef = collection(db, "user");
       const q = query(usersRef, where("email", "==", email));
       const querySnapshot = await getDocs(q);

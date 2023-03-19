@@ -9,6 +9,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
+import { db } from "../../../firebase";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -26,7 +27,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
       const { token } = decoded as any;
 
-      const db = getFirestore();
       const usersRef = collection(db, "user");
       const q = query(usersRef, where("token", "==", token));
       const querySnapshot = await getDocs(q);
