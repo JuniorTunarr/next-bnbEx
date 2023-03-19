@@ -6,7 +6,7 @@ import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
 import { wrapper } from "../store";
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (ctx) => {
+  (store) => async (ctx: any) => {
     return await getServerSidePropsWithAuth(ctx);
   }
 );
