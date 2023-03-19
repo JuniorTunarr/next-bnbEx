@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
 /* eslint-disable import/extensions */
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import cookie from "js-cookie";
 import styled from "styled-components";
 import Link from "next/link";
+import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
 import { userActions } from "../store/user";
 import { RootState, useSelector } from "../store";
 import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
@@ -163,4 +165,5 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export const getServerSideProps = getServerSidePropsWithAuth;
+export default withAuth(Header);
