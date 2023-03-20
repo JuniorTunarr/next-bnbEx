@@ -137,7 +137,7 @@ const RoomDetail: React.FC = () => {
       <section className="room-detail-contents">
         <div className="room-detail-infos">
           <p className="room-detail-room-type">
-            {room.host.lastname}님의 호스팅하는 {getTranslatedRoomType()}
+            {room.host.name}님의 호스팅하는 {getTranslatedRoomType()}
           </p>
           <p className="room-detail-space-counts">
             인원 {room.maximumGuestCount}명 · 침실 {room.bedroomCount}개 · 침대
