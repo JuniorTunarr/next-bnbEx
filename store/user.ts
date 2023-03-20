@@ -7,8 +7,6 @@ const initialState: UserState = {
   id: 0,
   email: "",
   name: "",
-  firstname: "",
-  lastname: "",
   phone: 0,
   nickname: "",
   gender: "",
@@ -23,8 +21,8 @@ const user = createSlice({
   reducers: {
     //* 로그인 한 유저 변경하기
     setLoggedUser(state, action: PayloadAction<UserType>) {
-      state = { ...action.payload, isLogged: true };
-      return state;
+      Object.assign(state, action.payload);
+      state.isLogged = true;
     },
     //* 로그인 상태 변경하기
     setLoggedInStatus(state, action: PayloadAction<boolean>) {
