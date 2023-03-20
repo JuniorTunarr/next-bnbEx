@@ -150,7 +150,7 @@ const Header: React.FC = () => {
     };
 
     fetchUserData();
-  }, [dispatch]);
+  }, [dispatch, isLogged]);
   return (
     <Container>
       <Link href="/">
