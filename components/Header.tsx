@@ -125,36 +125,6 @@ const Container = styled.div`
 
 const Header: React.FC = () => {
   const isLogged = useSelector((state) => state.user.isLogged);
-  // const dispatch = useDispatch();
-  // const user = useSelector((state: RootState) => state.user);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const token = cookie.get("access_token");
-  //     if (token) {
-  //       try {
-  //         const response = await fetch("/api/auth/me", {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         });
-
-  //         if (response.ok) {
-  //           const userData = await response.json();
-  //           dispatch(userActions.setLoggedUser(userData));
-  //           // Add this line to update the logged-in status
-  //           dispatch(userActions.setLoggedInStatus(true));
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching user data:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, [dispatch, isLogged]);
   return (
     <Container>
       <Link href="/">
@@ -170,30 +140,3 @@ const Header: React.FC = () => {
 };
 
 export default withAuth(Header);
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(async ({ store, req }) => {
-    const cookies = parseCookies({ req });
-    const token = cookies.access_token;
-    if (token) {
-      try {
-        const response = await fetch(
-          "https://https://next-bnb-ex.vercel.app/api/auth/me",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.ok) {
-          const userData = await response.json();
-          store.dispatch(userActions.setLoggedUser(userData));
-          store.dispatch(userActions.setLoggedInStatus(true));
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    }
-  });
