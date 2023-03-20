@@ -1,6 +1,6 @@
 import App, { AppContext, AppProps } from "next/app";
 import axios from "../lib/api";
-import Header from "../components/Header";
+import Header, { getServerSideProps } from "../components/Header";
 import GlobalStyle from "../styles/GlobalStyle";
 import { wrapper } from "../store";
 import { cookieStringToObject } from "../lib/utils";

@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+/* eslint-disable max-len */
 /* eslint-disable no-undef */
 /* eslint-disable import/extensions */
 import React, { useEffect } from "react";
@@ -7,13 +9,15 @@ import styled from "styled-components";
 import Link from "next/link";
 import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
 import { userActions } from "../store/user";
-import { RootState, useSelector } from "../store";
+import { RootState, useSelector, wrapper } from "../store";
 import AirbnbLogoIcon from "../public/static/svg/logo/logo.svg";
 import AirbnbLogoTextIcon from "../public/static/svg/logo/logo_text.svg";
 import palette from "../styles/palette";
 import HeaderAuths from "./HeaderAuths";
 import HeaderUserProfile from "./HeaderUserProfile";
-
+import { parseCookies } from "nookies";
+// eslint-disable-next-line import/newline-after-import
+import { GetServerSideProps } from "next";
 const Container = styled.div`
   position: sticky;
   top: 0;
@@ -121,36 +125,36 @@ const Container = styled.div`
 
 const Header: React.FC = () => {
   const isLogged = useSelector((state) => state.user.isLogged);
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user);
+  // const dispatch = useDispatch();
+  // const user = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = cookie.get("access_token");
-      if (token) {
-        try {
-          const response = await fetch("/api/auth/me", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const token = cookie.get("access_token");
+  //     if (token) {
+  //       try {
+  //         const response = await fetch("/api/auth/me", {
+  //           method: "GET",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
 
-          if (response.ok) {
-            const userData = await response.json();
-            dispatch(userActions.setLoggedUser(userData));
-            // Add this line to update the logged-in status
-            dispatch(userActions.setLoggedInStatus(true));
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
+  //         if (response.ok) {
+  //           const userData = await response.json();
+  //           dispatch(userActions.setLoggedUser(userData));
+  //           // Add this line to update the logged-in status
+  //           dispatch(userActions.setLoggedInStatus(true));
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching user data:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchUserData();
-  }, [dispatch, isLogged]);
+  //   fetchUserData();
+  // }, [dispatch, isLogged]);
   return (
     <Container>
       <Link href="/">
@@ -165,5 +169,31 @@ const Header: React.FC = () => {
   );
 };
 
-export const getServerSideProps = getServerSidePropsWithAuth;
 export default withAuth(Header);
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(async ({ store, req }) => {
+    const cookies = parseCookies({ req });
+    const token = cookies.access_token;
+    if (token) {
+      try {
+        const response = await fetch(
+          "https://https://next-bnb-ex.vercel.app/api/auth/me",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userData = await response.json();
+          store.dispatch(userActions.setLoggedUser(userData));
+          store.dispatch(userActions.setLoggedInStatus(true));
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+  });
