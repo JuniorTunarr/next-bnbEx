@@ -7,11 +7,11 @@ import { GetServerSideProps } from "next";
 import Home from "../components/home/Home";
 import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
 import { wrapper } from "../store";
-import { parseCookies } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import { userActions } from "../store/user";
 
 export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps(async ({ store, req }) => {
+  wrapper.getServerSideProps(async ({ store, req, res }) => {
     const cookies = parseCookies({ req });
     const token = cookies.access_token;
     if (token) {
@@ -32,6 +32,11 @@ export const getServerSideProps: GetServerSideProps =
           store.dispatch(userActions.setLoggedUser(userData));
           store.dispatch(userActions.setLoggedInStatus(true));
         }
+        // Set the access_token cookie with max-age
+        setCookie({ res }, "access_token", token, {
+          maxAge: 3 * 24 * 60 * 60, // 3 days
+          path: "/",
+        });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

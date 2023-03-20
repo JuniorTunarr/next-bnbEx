@@ -139,4 +139,4 @@ const Header: React.FC = () => {
   );
 };
 
-export default withAuth(Header);
+export default Header;
