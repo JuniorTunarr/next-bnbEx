@@ -147,7 +147,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
         </Button>
       </div>
       <p>
-        이미 에어비앤비 계정이 있나요?
+        이미 퍼퓸투데이 계정이 있나요?
         <span
           className="login-modal-set-signup"
           role="presentation"

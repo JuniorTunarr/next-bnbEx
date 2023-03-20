@@ -1,14 +1,41 @@
+/* eslint-disable import/order */
+/* eslint-disable max-len */
 /* eslint-disable no-return-await */
 // pages/index.tsx
 
+import { GetServerSideProps } from "next";
 import Home from "../components/home/Home";
 import { withAuth, getServerSidePropsWithAuth } from "../hocs/withAuth";
 import { wrapper } from "../store";
+import { parseCookies } from "nookies";
+import { userActions } from "../store/user";
 
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (ctx: any) => {
-    return await getServerSidePropsWithAuth(ctx);
-  }
-);
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(async ({ store, req }) => {
+    const cookies = parseCookies({ req });
+    const token = cookies.access_token;
+    if (token) {
+      try {
+        const response = await fetch(
+          "https://next-bnb-ex.vercel.app/api/auth/me",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const userData = await response.json();
+          store.dispatch(userActions.setLoggedUser(userData));
+          store.dispatch(userActions.setLoggedInStatus(true));
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+  });
 
 export default withAuth(Home);
