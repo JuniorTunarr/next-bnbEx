@@ -1,4 +1,4 @@
-import { AppContext, AppProps } from "next/app";
+import { AppContext, AppInitialProps, AppProps } from "next/app";
 import axios from "../lib/api";
 import Header from "../components/Header";
 import GlobalStyle from "../styles/GlobalStyle";
@@ -21,7 +21,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-App.getInitialProps = async (context: AppContext) => {
+App.getInitialProps = async (context: AppContext): Promise<AppInitialProps> => {
   const appInitialProps = await App.getInitialProps(context);
   const cookieObject = cookieStringToObject(context.ctx.req?.headers.cookie);
   console.log(cookieObject);
