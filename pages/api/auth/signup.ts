@@ -2,7 +2,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
 import { db } from "../../../firebase";
 
@@ -38,6 +45,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const usersRef = collection(db, "user");
   const q = query(usersRef, where("email", "==", email));
   const querySnapshot = await getDocs(q);
+  const allUsersSnapshot = await getDocs(usersRef);
+  const userCount = allUsersSnapshot.docs.length;
 
   if (querySnapshot.docs.length > 0) {
     return res.status(409).send("This email is already registered.");
@@ -45,7 +54,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const hashedPassword = bcrypt.hashSync(password, 8);
   const newUser: StoredUserType = {
-    id: querySnapshot.docs.length + 1,
+    id: userCount + 1,
     email,
     name,
     nickname,
@@ -55,6 +64,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     birthday,
     profileImage: "/static/image/user/default_user_profile_image.jpg",
     gender,
+    token: jwt.sign(
+      String(querySnapshot.docs.length + 1),
+      process.env.JWT_SECRET!
+    ),
+    createdAt: serverTimestamp(),
   };
 
   try {
@@ -65,7 +79,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     ).toUTCString();
     res.setHeader(
       "Set-Cookie",
-      `access_token=${token}; path=/; Expires=${Expires}; HttpOnly;`
+      `access_token=${token}; path=/; Expires=${Expires}; HttpOnly; SameSite=Lax`
     );
     res.status(200).json({ ...newUser, password: undefined });
   } catch (error) {

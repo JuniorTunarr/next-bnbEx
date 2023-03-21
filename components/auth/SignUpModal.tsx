@@ -469,19 +469,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
             email,
             password
           );
-          // firebase에 올릴 양식
-          // const docRef = await addDoc(collection(db, "user"), {
-          //   email,
-          //   name,
-          //   nickname,
-          //   phone,
-          //   birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
-          //     "월",
-          //     ""
-          //   )}-${birthDay!.replace("일", "")}`,
-          //   gender,
-          //   createdAt: serverTimestamp(),
-          // });
           alert("회원 가입이 완료되었습니다.");
         } else {
           userData = await signInWithEmailAndPassword(fbAuth, email, password);

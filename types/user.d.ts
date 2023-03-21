@@ -21,4 +21,6 @@ export type StoredUserType = {
   phone: string | number;
   gender: string;
   profileImage: string;
+  token: string;
+  createdAt: any;
 };
