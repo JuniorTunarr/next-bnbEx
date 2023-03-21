@@ -7,6 +7,8 @@ const initialState: UserState = {
   id: 0,
   email: "",
   name: "",
+  password: "",
+  passwordConfirm: "",
   phone: 0,
   nickname: "",
   gender: "",

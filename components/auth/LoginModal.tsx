@@ -103,6 +103,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
   };
 
   useEffect(() => {
+    setValidateMode(true);
     return () => {
       setValidateMode(false);
     };

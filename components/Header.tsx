@@ -1,3 +1,4 @@
+/* eslint-disable import/newline-after-import */
 /* eslint-disable import/order */
 /* eslint-disable max-len */
 /* eslint-disable no-undef */
@@ -18,6 +19,8 @@ import HeaderUserProfile from "./HeaderUserProfile";
 import { parseCookies } from "nookies";
 // eslint-disable-next-line import/newline-after-import
 import { GetServerSideProps } from "next";
+import { meAPI } from "../lib/api/auth";
+import axios from "../lib/api";
 const Container = styled.div`
   position: sticky;
   top: 0;
@@ -124,7 +127,25 @@ const Container = styled.div`
 `;
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch();
   const isLogged = useSelector((state) => state.user.isLogged);
+
+  const checkAndSetLoginStatus = async () => {
+    try {
+      const token = cookie.get("access_token");
+      if (token) {
+        axios.defaults.headers.cookie = token;
+        const { data } = await meAPI();
+        dispatch(userActions.setLoggedUser(data));
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    checkAndSetLoginStatus();
+  }, []);
   return (
     <Container>
       <Link href="/">
@@ -140,4 +161,3 @@ const Header: React.FC = () => {
 };
 
 export default Header;
-// ??

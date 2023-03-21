@@ -5,6 +5,8 @@ export type UserType = {
   name: string;
   phone: number;
   birthday: string;
+  password: string;
+  passwordConfirm: string;
   gender: string;
   profileImage: string;
 };
