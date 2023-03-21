@@ -1,5 +1,11 @@
+/* eslint-disable no-else-return */
+/* eslint-disable no-undef */
 import { HYDRATE, createWrapper, MakeStore } from "next-redux-wrapper";
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  combineReducers,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import {
   TypedUseSelectorHook,
   useSelector as useReduxSelector,
@@ -23,31 +29,27 @@ const rootReducer = combineReducers({
 //* 스토어의 타입
 export type RootState = ReturnType<typeof rootReducer>;
 
-let initialRootState: RootState;
-
-const reducer = (state: any, action: any) => {
+const reducer = (state: RootState | undefined, action: any) => {
   if (action.type === HYDRATE) {
-    if (state === initialRootState) {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    }
-    return state;
+    const nextState = {
+      ...state, // use previous state
+      ...action.payload, // apply delta from hydration
+    };
+    return nextState;
+  } else {
+    return rootReducer(state, action);
   }
-  return rootReducer(state, action);
 };
 
 //* 타입 지원되는 커스텀 useSelector 만들기
 export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
 
 const initStore: MakeStore = () => {
-  const store = configureStore({
+  return configureStore({
     reducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
     devTools: true,
   });
-  initialRootState = store.getState();
-  return store;
 };
 
 export const wrapper = createWrapper(initStore);
