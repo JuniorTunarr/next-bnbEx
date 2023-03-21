@@ -22,7 +22,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 };
 
 App.getInitialProps = async (context: AppContext): Promise<AppInitialProps> => {
-  const appInitialProps = await App.getInitialProps(context);
+  const appInitialProps = await App.getInitialProps.call(this, context); // changed this line
   const cookieObject = cookieStringToObject(context.ctx.req?.headers.cookie);
   console.log(cookieObject);
   const { store } = context.ctx;
