@@ -424,6 +424,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   };
 
   useEffect(() => {
+    setValidateMode(true);
     return () => {
       setValidateMode(false);
     };

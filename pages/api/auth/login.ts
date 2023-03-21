@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { NextApiRequest, NextApiResponse } from "next";
 import {
-  getFirestore,
   collection,
   query,
   where,
@@ -39,10 +38,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.send("Password does not match.");
       }
 
-      const token = jwt.sign(
-        { id: String(user.id), token: String(user.token) },
-        process.env.JWT_SECRET!
-      );
+      const token = jwt.sign({ id: String(user.id) }, process.env.JWT_SECRET!);
       console.log(token);
       const userDocRef = doc(db, "user", querySnapshot.docs[0].id);
       await updateDoc(userDocRef, { token });
