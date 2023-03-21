@@ -54,6 +54,7 @@ import useValidateMode from "../../hooks/useValidateMode";
 import PasswordWarning from "./PasswordWarning";
 import { authActions } from "../../store/auth";
 import { db, fbAuth } from "../../firebase";
+import axios from "../../lib/api";
 
 const Container = styled.form`
   width: 532px;
@@ -474,8 +475,11 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
           userData = await signInWithEmailAndPassword(fbAuth, email, password);
           alert("이미 가입된 계정이 있습니다.");
         }
-        const { data } = await signupAPI(signUpBody);
-        dispatch(userActions.setLoggedUser(data));
+        const userResponse = await axios.post("/api/auth/signup", signUpBody);
+        const user = userResponse.data;
+        dispatch(userActions.setLoggedUser(user));
+        // const { data } = await signupAPI(signUpBody);
+        // dispatch(userActions.setLoggedUser(data));
         closeModal();
       } catch (e) {
         console.log(e);
