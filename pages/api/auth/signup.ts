@@ -9,6 +9,8 @@ import {
   getDocs,
   addDoc,
   serverTimestamp,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { StoredUserType } from "../../../types/user";
 import { db } from "../../../firebase";
@@ -77,9 +79,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const Expires = new Date(
       Date.now() + 60 * 60 * 24 * 1000 * 3
     ).toUTCString();
+    const userDocRef = doc(db, "user", querySnapshot.docs[0].id);
+    await updateDoc(userDocRef, { token });
     res.setHeader(
       "Set-Cookie",
-      `access_token=${token}; path=/; Expires=${Expires}; HttpOnly; SameSite=Lax`
+      `access_token=${token}; path=/; expires=${new Date(
+        Date.now() + 60 * 60 * 24 * 1000 * 3 // 3 days
+      )}; HttpOnly; SameSite=Lax`
     );
     res.status(200).json({ ...newUser, password: undefined });
   } catch (error) {
