@@ -472,13 +472,13 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
             password
           );
           alert("회원 가입이 완료되었습니다.");
+          const { data } = await signupAPI(signUpBody);
+          dispatch(userActions.setLoggedUser(data));
+          closeModal();
         } else {
           userData = await signInWithEmailAndPassword(fbAuth, email, password);
           alert("이미 가입된 계정이 있습니다.");
         }
-        const { data } = await signupAPI(signUpBody);
-        dispatch(userActions.setLoggedUser(data));
-        closeModal();
       } catch (e) {
         console.log(e);
       }

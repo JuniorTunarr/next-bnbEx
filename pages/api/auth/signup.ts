@@ -47,6 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const usersRef = collection(db, "user");
   const q = query(usersRef, where("email", "==", email));
   const querySnapshot = await getDocs(q);
+  const user = querySnapshot.docs[0].data();
   const allUsersSnapshot = await getDocs(usersRef);
   const userCount = allUsersSnapshot.docs.length;
 
@@ -75,10 +76,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const docRef = await addDoc(usersRef, newUser);
-    const token = jwt.sign(String(newUser.id), process.env.JWT_SECRET!);
-    const Expires = new Date(
-      Date.now() + 60 * 60 * 24 * 1000 * 3
-    ).toUTCString();
+    const token = jwt.sign({ id: String(user.id) }, process.env.JWT_SECRET!);
     const userDocRef = doc(db, "user", querySnapshot.docs[0].id);
     await updateDoc(userDocRef, { token });
     res.setHeader(
