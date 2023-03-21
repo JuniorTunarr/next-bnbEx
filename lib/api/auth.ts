@@ -10,6 +10,7 @@ interface SingUpAPIBody {
   password: string;
   passwordConfirm: string;
   birthday: string;
+  gender: string | undefined;
 }
 
 //* 회원 가입 api

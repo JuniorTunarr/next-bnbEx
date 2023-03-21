@@ -424,7 +424,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   };
 
   useEffect(() => {
-    setValidateMode(true);
     return () => {
       setValidateMode(false);
     };
@@ -449,36 +448,33 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   const onSubmitSignUp = async (data: any) => {
     if (validateSignUpForm()) {
       let userData;
+      const signUpBody = {
+        email,
+        name,
+        nickname,
+        phone: String(phone),
+        password,
+        passwordConfirm,
+        birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
+          "월",
+          ""
+        )}-${birthDay!.replace("일", "")}`,
+        gender,
+      };
       try {
-        const signUpBody = {
+        // create account
+        userData = await createUserWithEmailAndPassword(
+          fbAuth,
           email,
-          name,
-          nickname,
-          phone: String(phone),
-          password,
-          passwordConfirm,
-          birthday: `${birthYear!.replace("년", "")}-${birthMonth!.replace(
-            "월",
-            ""
-          )}-${birthDay!.replace("일", "")}`,
-          gender,
-        };
-        if (newAccount) {
-          // create account
-          userData = await createUserWithEmailAndPassword(
-            fbAuth,
-            email,
-            password
-          );
-          alert("회원 가입이 완료되었습니다.");
-          const { data } = await signupAPI(signUpBody);
-          dispatch(userActions.setLoggedUser(data));
-        } else {
-          userData = await signInWithEmailAndPassword(fbAuth, email, password);
-          alert("이미 가입된 계정이 있습니다.");
-        }
+          password
+        );
+        alert("회원 가입이 완료되었습니다.");
+        const { data } = await signupAPI(signUpBody);
+        dispatch(userActions.setLoggedUser(data));
         closeModal();
       } catch (e) {
+        userData = await signInWithEmailAndPassword(fbAuth, email, password);
+        alert("이미 가입된 계정이 있습니다.");
         console.log(e);
       }
     }
