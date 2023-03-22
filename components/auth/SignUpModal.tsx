@@ -267,7 +267,6 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
       } else {
         setPasswordMessage("사용가능한 비밀번호입니다.");
         setIsPassword(true);
-        setIsValidationReady(true);
       }
     },
     []
@@ -391,39 +390,43 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
     []
   );
 
-  const checkValidation = () => {
-    switch (currentId) {
+  const checkValidationForId = (id: number) => {
+    switch (id) {
       case 1:
-        return isEmail;
+        return !!email && isEmail;
       case 2:
-        return isPassword && isPasswordConfirm;
+        return (
+          !!password && isPassword && !!passwordConfirm && isPasswordConfirm
+        );
       case 3:
-        return isName;
+        return !!name && isName;
       case 4:
-        return isNickname;
+        return !!nickname && isNickname;
       case 5:
-        return isPhone;
-      default:
-        return false;
-    }
-  };
-  const checkPrevValidation = () => {
-    switch (currentId - 1) {
-      case 1:
-        return isEmail;
-      case 2:
-        return isPassword && isPasswordConfirm;
-      case 3:
-        return isName;
-      case 4:
-        return isNickname;
-      case 5:
-        return isPhone;
+        return !!phone && isPhone;
       default:
         return false;
     }
   };
 
+  const checkValidation = () => {
+    switch (currentId) {
+      case 1:
+        return !!email && isEmail;
+      case 2:
+        return (
+          !!password && isPassword && !!passwordConfirm && isPasswordConfirm
+        );
+      case 3:
+        return !!name && isName;
+      case 4:
+        return !!nickname && isNickname;
+      case 5:
+        return !!phone && isPhone;
+      default:
+        return false;
+    }
+  };
   //* 회원가입 폼 입력 값 확인하기
   const validateSignUpForm = () => {
     //* 인풋 값이 없다면
@@ -449,19 +452,24 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   const changeToLoginModal = useCallback(() => {
     dispatch(authActions.setAuthMode("login"));
   }, []);
-
   const handleNextClick = () => {
     if (checkValidation()) {
-      setCurrentId(currentId + 1);
-      setIsValidationReady(checkValidation());
+      setCurrentId((prevId) => {
+        const newId = prevId + 1;
+        setIsValidationReady(checkValidationForId(newId));
+        return newId;
+      });
     } else {
       setIsValidationReady(false);
     }
   };
 
   const handlePrevClick = () => {
-    setCurrentId(currentId - 1);
-    setIsValidationReady(checkPrevValidation());
+    setCurrentId((prevId) => {
+      const newId = prevId - 1;
+      setIsValidationReady(checkValidationForId(newId));
+      return newId;
+    });
   };
 
   //* 회원가입 폼 제출하기
