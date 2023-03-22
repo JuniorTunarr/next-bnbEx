@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import bcrypt from "bcryptjs";
 import CloseXIcon from "../../public/static/svg/modal/modal_colose_x_icon.svg";
 import MailIcon from "../../public/static/svg/auth/mail.svg";
 import OpenedEyeIcon from "../../public/static/svg/auth/opened_eye.svg";
@@ -13,6 +15,7 @@ import { authActions } from "../../store/auth";
 import { loginAPI } from "../../lib/api/auth";
 import useValidateMode from "../../hooks/useValidateMode";
 import { userActions } from "../../store/user";
+import { db } from "../../firebase";
 
 const Container = styled.form`
   width: 568px;
@@ -89,15 +92,27 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
     if (!email || !password) {
       alert("이메일과 비밀번호를 입력해 주세요.");
     } else {
-      const loginBody = { email, password };
+      const q = query(collection(db, "user"), where("email", "==", email));
+      const querySnapshot = await getDocs(q);
 
-      try {
-        const { data } = await loginAPI(loginBody);
-        dispatch(userActions.setLoggedUser(data));
-        closeModal();
-      } catch (error: any) {
-        // eslint-disable-next-line no-console
-        console.log(error);
+      if (querySnapshot.empty) {
+        alert("존재하지 않는 계정입니다.");
+      } else {
+        const user = querySnapshot.docs[0].data();
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+          alert("비밀번호가 올바르지 않습니다.");
+        } else {
+          const loginBody = { email, password };
+          try {
+            const { data } = await loginAPI(loginBody);
+            dispatch(userActions.setLoggedUser(data));
+            closeModal();
+          } catch (error: any) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+          }
+        }
       }
     }
   };

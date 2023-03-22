@@ -157,39 +157,8 @@ const disabledDays = ["일"];
 //* 선택할 수 없는 년 option
 const disabledYears = ["년"];
 const disabledGender = ["성별"];
-
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
 // eslint-disable-next-line no-undef
-const signUpSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("@를 포함하여 이메일 형식으로 작성해주세요.")
-    .required("이메일을 입력해주세요.")
-    .test("uniqueEmail", "이미 등록된 이메일입니다.", async (value) => {
-      const q = query(collection(db, "user"), where("email", "==", value));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.empty;
-    }),
-  name: Yup.string().required("이름을 입력해주세요."),
-  nickname: Yup.string()
-    .required("Please enter your nickname.")
-    .min(2, "닉네임은 최소 2글자로 작성해주세요.")
-    .max(6, "닉네임은 최대 6글자로 작성해주세요.")
-    .test("uniqueNickname", "이미 사용중인 닉네임입니다.", async (value) => {
-      const q = query(collection(db, "user"), where("nickname", "==", value));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.empty;
-    }),
-  phone: Yup.string().required("Please enter your phone number."),
-  password: Yup.string()
-    .matches(
-      passwordRegex,
-      "비밀번호는 영문+숫자를 포함한 8-16자리로 입력해주세요"
-    )
-    .required("비밀번호를 입력해주세요."),
-  passwordConfirm: Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "비밀번호가 일치하지 않습니다.")
-    .required("비밀번호를 다시 입력해주세요."),
-});
 
 const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   { closeModal },
@@ -231,11 +200,9 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   const [isPhone, setIsPhone] = useState<boolean>(false);
 
   const {
-    register,
-    setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange", resolver: yupResolver(signUpSchema) });
+  } = useForm({ mode: "onChange" });
   const dispatch = useDispatch();
 
   const { setValidateMode } = useValidateMode();
@@ -374,6 +341,20 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
         setIsPhone(true);
         setIsValidationReady(true);
       }
+      // Check if email is already registered
+      const q = query(collection(db, "user"), where("phone", "==", phoneValue));
+      getDocs(q)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            setPhoneMessage("이미 등록된 휴대폰번호입니다.");
+            setIsPhone(false);
+            setIsValidationReady(false);
+          }
+          return querySnapshot;
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
     },
     []
   );
@@ -410,6 +391,39 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
     []
   );
 
+  const checkValidation = () => {
+    switch (currentId) {
+      case 1:
+        return isEmail;
+      case 2:
+        return isPassword && isPasswordConfirm;
+      case 3:
+        return isName;
+      case 4:
+        return isNickname;
+      case 5:
+        return isPhone;
+      default:
+        return false;
+    }
+  };
+  const checkPrevValidation = () => {
+    switch (currentId - 1) {
+      case 1:
+        return isEmail;
+      case 2:
+        return isPassword && isPasswordConfirm;
+      case 3:
+        return isName;
+      case 4:
+        return isNickname;
+      case 5:
+        return isPhone;
+      default:
+        return false;
+    }
+  };
+
   //* 회원가입 폼 입력 값 확인하기
   const validateSignUpForm = () => {
     //* 인풋 값이 없다면
@@ -423,6 +437,7 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
     return true;
   };
 
+  // ValidationMode default false -> 기존 에어비앤비
   useEffect(() => {
     setValidateMode(true);
     return () => {
@@ -436,13 +451,17 @@ const SignUpModal: ForwardRefRenderFunction<HTMLInputElement, IProps> = (
   }, []);
 
   const handleNextClick = () => {
-    setCurrentId(currentId + 1);
-    setIsValidationReady(false);
+    if (checkValidation()) {
+      setCurrentId(currentId + 1);
+      setIsValidationReady(checkValidation());
+    } else {
+      setIsValidationReady(false);
+    }
   };
 
   const handlePrevClick = () => {
     setCurrentId(currentId - 1);
-    setIsValidationReady(true);
+    setIsValidationReady(checkPrevValidation());
   };
 
   //* 회원가입 폼 제출하기
