@@ -162,7 +162,7 @@ const LoginModal: React.FC<IProps> = ({ closeModal }) => {
         </Button>
       </div>
       <p>
-        이미 퍼퓸투데이 계정이 있나요?
+        아직 퍼퓸투데이 계정이 없으신가요?
         <span
           className="login-modal-set-signup"
           role="presentation"
